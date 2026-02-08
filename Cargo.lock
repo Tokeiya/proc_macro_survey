@@ -6,7 +6,10 @@ version = 4
 name = "playground"
 version = "0.1.0"
 dependencies = [
+ "proc-macro2",
  "proc_macro",
+ "quote",
+ "syn",
 ]
 
 [[package]]
