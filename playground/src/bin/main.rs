@@ -1,48 +1,108 @@
-use quote::ToTokens;
+use playground::prelude::*;
 use proc_macro::*;
-use syn::{Data, DeriveInput, Fields, Type, parse_quote, DataEnum, Variant, FieldsUnnamed};
+use proc_macro2::Ident;
+use quote::{ToTokens, quote};
+use syn::{Data, DataEnum, DeriveInput, Field, Fields, FieldsUnnamed, Type, Variant, parse_quote};
+use syn::{FieldsNamed, ItemEnum};
+pub struct Envelope(pub i16);
 
-
-
-enum Foo{
-	
-	Tuple(#[doc="foo"]#[cfg(dummy_a)] (i32,i32),String),
-	Anonymous{value:i32,name:String}
+#[cfg(feature = "dummy_a")]
+pub enum EnumSample<'a, 'b, T: 'b>
+where
+	'a: 'b,
+{
+	#[cfg(feature = "dummy_b")]
+	#[doc = "document"]
+	TupleVariant((&'b T, i32), &'a str),
+	#[cfg(feature = "dummy_c")]
+	NamedVariant {
+		reference: &'a Envelope,
+		value: i32,
+		tuple: (f32, f64),
+	},
+	#[cfg(feature = "dummy_d")]
+	UnitVariant,
 }
-
-
 
 fn main() {
-	let input:DeriveInput = parse_quote! {
-enum Foo{
-	
-	Tuple(#[doc="foo"]#[cfg(dummy_a)] (i32,i32),String),
-	Anonymous{value:i32,name:String}
-}
-    };
-	
-	println!("{}",input.to_token_stream());
-	
-	if let Data::Enum(data)=input.data{
-		for variant in data.variants.iter(){
-			match &(variant.fields) {
-				Fields::Named(x) => {}
-				Fields::Unnamed(x) => {}
-				Fields::Unit => {}
-			}
-		}
-	}
-	
+	let input: ItemEnum = parse_quote! {
+		#[cfg(feature = "dummy_a")]
+	#[cfg(feature = "dummy_a")]
+	pub enum EnumSample<'a, 'b, T: 'b>
+	where
+		'a: 'b,
+	{
+		#[cfg(feature = "dummy_b")]
+		#[doc = "document"]
+		TupleVariant((&'b T, i32), &'a str),
+		#[cfg(feature = "dummy_c")]
+		NamedVariant {
+			reference: &'a Envelope,
+			value: i32,
+			tuple: (f32, f64),
+		},
+		#[cfg(feature = "dummy_d")]
+		UnitVariant,
+	}};
+
+	enum_proc(&input);
 }
 
-fn proc_unnnamed(data:&FieldsUnnamed){
-	for fld in data.unnamed.iter(){
-	
+fn enum_proc(enum_data: &ItemEnum) {
+	println!("enum_proc");
+	let g = &enum_data.generics;
+	let (i, t, w) = enum_data.generics.split_for_impl();
+
+	print_token(Some("gen"), &g);
+	print_token(Some("impl"), &i);
+	print_token(Some("ty"), &t);
+
+	if let Some(w) = w {
+		print_token(Some("where"), &w);
+	}
+	println!();
+
+	for variant in enum_data.variants.iter() {
+		variant_proc(variant);
 	}
 }
+
+fn variant_proc(variant: &Variant) {
+	println!("ident:{}", &variant.ident);
+
+	for attr in variant.attrs.iter() {
+		print_token(Some("attr"), attr);
+	}
+
+	_ = match &variant.fields {
+		Fields::Named(n) => named_proc(n),
+		Fields::Unnamed(u) => unnamed_proc(u),
+		Fields::Unit => println!("Unit"),
+	};
+
+	println!()
+}
+
+fn named_proc(value: &FieldsNamed) {
+	println!("named");
+	for elem in value.named.iter() {
+		print_token(Some("field"), elem)
+	}
+	println!()
+}
+
+fn unnamed_proc(value: &FieldsUnnamed) {
+	println!("unnnamed");
+	for elem in value.unnamed.iter() {
+		print_token(Some("field"), elem)
+	}
+
+	println!()
+}
+
+fn field_proc(value: &Field) {}
 
 #[cfg(test)]
 mod tests {
 	use super::*;
-
 }

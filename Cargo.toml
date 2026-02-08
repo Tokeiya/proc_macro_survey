@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["playground", "proc_macro"]
+members = ["mermaid_writer","playground", "proc_macro"]
 
 
 
