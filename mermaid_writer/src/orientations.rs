@@ -36,10 +36,7 @@ impl<W: IoWrite> Writer<W> for Orientation {
 mod tests {
 	use super::*;
 	use crate::prelude::Orientation;
-
-	fn assert(actual: &[u8], expected: &str) {
-		assert_eq!(actual, expected.as_bytes())
-	}
+	use crate::test_prelude::*;
 
 	#[test]
 	fn write() {
