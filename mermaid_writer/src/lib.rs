@@ -1,4 +1,9 @@
+mod contents_format;
+mod direction;
 mod error;
+mod flowcharts;
+mod link;
+mod node;
 mod node_shapes;
 mod orientations;
 mod shape_keywords;

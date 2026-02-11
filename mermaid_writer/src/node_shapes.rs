@@ -18,12 +18,3 @@ pub enum Shape {
 	DoubleCircle,
 	Other(String),
 }
-
-impl<W: Write> Writer<W> for Shape {
-	fn write(&self, writer: &mut W) -> crate::error::Result<()> {
-		todo!()
-	}
-}
-
-#[cfg(test)]
-mod tests {}
