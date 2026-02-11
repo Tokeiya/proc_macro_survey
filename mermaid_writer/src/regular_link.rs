@@ -5,7 +5,20 @@ use std::hash::Hash;
 use std::io::Write;
 
 pub struct RegularLink<K> {
-	key: K,
+	source: K,
+	target: K,
+	format: Format,
+	contents: Option<String>,
+}
+
+impl<K: PartialEq + Hash + Clone> RegularLink<K> {
+	pub fn new(source: K, target: K, format: Format, contents: Option<String>) -> Self {
+		todo!()
+	}
+
+	pub fn textless_new(source: K, target: K) -> Self {
+		todo!()
+	}
 }
 
 impl<K: PartialEq + Hash + Clone> Render for RegularLink<K> {
