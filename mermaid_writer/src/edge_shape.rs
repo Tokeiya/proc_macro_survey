@@ -1,4 +1,5 @@
-pub enum LinkShape {
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Shape {
 	Normal,
 	Dotted,
 	Thick,

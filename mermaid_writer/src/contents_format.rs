@@ -1,4 +1,4 @@
-pub enum ContentsFormat {
+pub enum Format {
 	Text,
 	Markdown,
 }
