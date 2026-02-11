@@ -1,6 +1,7 @@
-use crate::prelude::Writer;
+use crate::prelude::Render;
 use std::io::Write;
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Shape {
 	Rect,
 	Rounded,

@@ -1,9 +1,10 @@
 use crate::contents_format::ContentsFormat;
-use crate::writer::Writer;
+use crate::render::Render;
 use std::io::Write;
 
-pub trait Link<K>: Writer {
-	fn from(&self) -> K;
+pub trait Link<K>: Render {
 	fn source(&self) -> K;
-	fn target(&self) -> ContentsFormat;
+	fn target(&self) -> K;
+	fn format(&self) -> ContentsFormat;
+	fn contents(&self) -> &str;
 }

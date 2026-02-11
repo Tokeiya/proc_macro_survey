@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use std::io::Write as IoWrite;
-pub trait Writer {
+pub trait Render {
 	fn write(&self, writer: &mut dyn IoWrite) -> Result<()>;
 }
 
