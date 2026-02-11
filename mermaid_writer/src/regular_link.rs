@@ -29,7 +29,7 @@ impl<K: PartialEq + Hash + Clone> RegularLink<K> {
 }
 
 impl<K: PartialEq + Hash + Clone> Render for RegularLink<K> {
-	fn write(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
+	fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
 		todo!()
 	}
 }
