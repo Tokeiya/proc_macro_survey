@@ -136,7 +136,7 @@ mod tests {
 			Format::Text,
 			Some("Hello world".to_string()),
 		);
-		assert_render(&fixture, "1[\"Hello world\"]");
+		assert_render(&fixture, "1 [\"Hello world\"]");
 
 		let fixture = RegularNode::new(
 			"Hello".to_string(),
@@ -144,6 +144,6 @@ mod tests {
 			Format::Markdown,
 			Some("Hello world".to_string()),
 		);
-		assert_render(&fixture, "Hello(\"`Hello world`\")");
+		assert_render(&fixture, "Hello (\"`Hello world`\")");
 	}
 }
