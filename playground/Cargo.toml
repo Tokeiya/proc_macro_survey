@@ -8,11 +8,13 @@ proc_macro = { path = "../proc_macro" }
 syn = { version = "*", features = ["full"] }
 quote = "*"
 proc-macro2 = "*"
+regex = "*"
+
 
 
 [features]
-dummy_a=[]
-dummy_b=[]
-dummy_c=[]
-dummy_d=[]
+dummy_a = []
+dummy_b = []
+dummy_c = []
+dummy_d = []
 

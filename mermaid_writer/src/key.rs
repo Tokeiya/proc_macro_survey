@@ -11,7 +11,8 @@ pub(super) mod test_helper {
 
 	impl Render for i32 {
 		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-			todo!()
+			write!(writer, "{}", self)?;
+			Ok(())
 		}
 	}
 
@@ -19,7 +20,8 @@ pub(super) mod test_helper {
 
 	impl Render for String {
 		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-			todo!()
+			write!(writer, "{}", self)?;
+			Ok(())
 		}
 	}
 
