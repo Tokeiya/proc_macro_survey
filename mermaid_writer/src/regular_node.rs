@@ -3,22 +3,19 @@ use crate::key::Key;
 use crate::node::Node;
 use crate::node_shape::Shape;
 use crate::prelude::Render;
-use std::hash::Hash;
 use std::io::Write;
 
 pub struct RegularNode<K> {
 	key: K,
 	shape: Shape,
-	format: Format,
 	contents: Option<String>,
 }
 
 impl<K: Key> RegularNode<K> {
-	pub fn new(key: K, shape: Shape, format: Format, contents: Option<String>) -> Self {
+	pub fn new(key: K, shape: Shape, contents: Option<String>) -> Self {
 		Self {
 			key,
 			shape,
-			format,
 			contents,
 		}
 	}
@@ -27,15 +24,22 @@ impl<K: Key> RegularNode<K> {
 		Self {
 			key,
 			shape,
-			format: Format::Text,
 			contents: None,
 		}
 	}
 }
 
-impl<K: PartialEq + Hash + Clone> Render for RegularNode<K> {
+impl<K: Key> Render for RegularNode<K> {
 	fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-		todo!()
+		self.key.render(writer)?;
+		write!(writer, "@{{ shape: ")?;
+		self.shape.render(writer)?;
+		write!(writer, ",label: \"")?;
+		if let Some(contents) = &self.contents {
+			write!(writer, "{contents}")?;
+		}
+		write!(writer, "\" }}")?;
+		Ok(())
 	}
 }
 
@@ -45,7 +49,7 @@ impl<K: Key> Node<K> for RegularNode<K> {
 	}
 
 	fn format(&self) -> Format {
-		self.format.clone()
+		Format::Markdown
 	}
 
 	fn contents(&self) -> Option<&str> {
@@ -60,15 +64,9 @@ mod tests {
 
 	#[test]
 	fn new() {
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Text,
-			Some("Hello world".to_string()),
-		);
+		let fixture = RegularNode::new(1, Shape::Rect, Some("Hello world".to_string()));
 		assert_eq!(fixture.key, 1);
 		assert_eq!(fixture.shape, Shape::Rect);
-		assert_eq!(fixture.format, Format::Text);
 		assert_eq!(fixture.contents.unwrap(), "Hello world");
 	}
 
@@ -85,45 +83,22 @@ mod tests {
 		let fixture = RegularNode::textless_new(1, Shape::Rect);
 		assert_eq!(fixture.id(), 1);
 
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Text,
-			Some("Hello world".to_string()),
-		);
+		let fixture = RegularNode::new(1, Shape::Rect, Some("Hello world".to_string()));
 		assert_eq!(fixture.id(), 1)
 	}
 
 	#[test]
 	fn format() {
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Text,
-			Some("Hello world".to_string()),
-		);
-		assert_eq!(fixture.format(), Format::Text);
-
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Markdown,
-			Some("**MarkDown**".to_string()),
-		);
+		let fixture = RegularNode::new(1, Shape::Rect, Some("**MarkDown**".to_string()));
 		assert_eq!(fixture.format(), Format::Markdown);
 
 		let fixture = RegularNode::textless_new(1, Shape::Rect);
-		assert_eq!(fixture.format(), Format::Text)
+		assert_eq!(fixture.format(), Format::Markdown)
 	}
 
 	#[test]
 	fn contents() {
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Text,
-			Some("Hello world".to_string()),
-		);
+		let fixture = RegularNode::new(1, Shape::Rect, Some("Hello world".to_string()));
 		assert_eq!(fixture.contents(), Some("Hello world"));
 
 		let fixture = RegularNode::textless_new(1, Shape::Rect);
@@ -132,20 +107,13 @@ mod tests {
 
 	#[test]
 	fn render() {
-		let fixture = RegularNode::new(
-			1,
-			Shape::Rect,
-			Format::Text,
-			Some("Hello world".to_string()),
-		);
-		assert_render(&fixture, "1[\"Hello world\"]");
+		let fixture = RegularNode::new(1, Shape::Rect, Some("Rect".to_string()));
+		assert_render(&fixture, "1@{ shape: rect,label: \"Rect\" }");
 
-		let fixture = RegularNode::new(
-			"Hello".to_string(),
-			Shape::Rounded,
-			Format::Markdown,
-			Some("Hello world".to_string()),
-		);
-		assert_render(&fixture, "Hello(\"`Hello world`\")");
+		let fixture = RegularNode::textless_new(2, Shape::Circle);
+		assert_render(&fixture, "2@{ shape: circle,label: \"\" }");
+
+		let fixture = RegularNode::new(3, Shape::Diamond, None);
+		assert_render(&fixture, "3@{ shape: diamond,label: \"\" }");
 	}
 }

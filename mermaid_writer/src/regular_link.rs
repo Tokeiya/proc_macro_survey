@@ -14,13 +14,7 @@ pub struct RegularLink<K> {
 }
 
 impl<K: Key> RegularLink<K> {
-	pub fn new(
-		source: K,
-		target: K,
-		shape: Shape,
-		format: Format,
-		contents: Option<String>,
-	) -> Self {
+	pub fn new(source: K, target: K, shape: Shape, contents: Option<String>) -> Self {
 		todo!()
 	}
 

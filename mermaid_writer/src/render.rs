@@ -16,6 +16,8 @@ pub mod test_helper {
 		let mut write: Vec<u8> = Vec::new();
 
 		actual.render(&mut write).unwrap();
-		assert_eq!(write, expected.as_bytes());
+		let actual = String::from_utf8(write).unwrap();
+
+		assert_eq!(actual, expected);
 	}
 }
