@@ -4,6 +4,4 @@ pub enum Shape {
 	Dotted,
 	Thick,
 	Invisible,
-	CircleEdge,
-	CrossEdge,
 }

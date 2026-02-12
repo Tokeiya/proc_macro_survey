@@ -2,5 +2,5 @@
 pub enum Direction {
 	Oneway,
 	Both,
-	None,
+	Open,
 }

@@ -1,9 +1,10 @@
+pub mod arrow_shape;
 mod contents_format;
 mod direction;
-pub mod edge_shape;
 mod error;
 mod flowcharts;
 mod key;
+pub mod line_shape;
 mod link;
 mod node;
 pub mod node_shape;
