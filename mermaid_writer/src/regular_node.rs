@@ -58,22 +58,6 @@ mod tests {
 	use super::*;
 	use crate::render::test_helper::assert_render;
 
-	impl Render for i32 {
-		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-			todo!()
-		}
-	}
-
-	impl Key for i32 {}
-
-	impl Render for String {
-		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-			todo!()
-		}
-	}
-
-	impl Key for String {}
-
 	#[test]
 	fn new() {
 		let fixture = RegularNode::new(

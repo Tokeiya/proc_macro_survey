@@ -1,5 +1,6 @@
 use crate::contents_format::Format;
 use crate::edge_shape::Shape;
+use crate::key::Key;
 use crate::link::Link;
 use crate::prelude::Render;
 use std::hash::Hash;
@@ -12,7 +13,7 @@ pub struct RegularLink<K> {
 	contents: Option<String>,
 }
 
-impl<K: PartialEq + Hash + Clone> RegularLink<K> {
+impl<K: Key> RegularLink<K> {
 	pub fn new(
 		source: K,
 		target: K,
@@ -34,7 +35,7 @@ impl<K: PartialEq + Hash + Clone> Render for RegularLink<K> {
 	}
 }
 
-impl<K: PartialEq + Hash + Clone> Link<K> for RegularLink<K> {
+impl<K: Key> Link<K> for RegularLink<K> {
 	fn source(&self) -> K {
 		todo!()
 	}
