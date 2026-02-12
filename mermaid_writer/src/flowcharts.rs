@@ -5,6 +5,8 @@ use crate::orientations::Orientation;
 use crate::prelude::Render;
 use std::hash::Hash;
 
+
+//think about link duplication and node duplication.
 pub struct Flowchart<K: PartialEq + Hash + Clone> {
 	orientation: Orientation,
 	nodes: Vec<Box<dyn Node<K>>>,

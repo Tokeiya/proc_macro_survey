@@ -86,7 +86,8 @@ fn variant_proc(variant: &Variant) {
 fn named_proc(value: &FieldsNamed) {
 	println!("named");
 	for elem in value.named.iter() {
-		print_token(Some("field"), elem)
+		print_token(Some("field"), elem);
+		field_proc(elem);
 	}
 	println!()
 }
@@ -94,13 +95,23 @@ fn named_proc(value: &FieldsNamed) {
 fn unnamed_proc(value: &FieldsUnnamed) {
 	println!("unnnamed");
 	for elem in value.unnamed.iter() {
-		print_token(Some("field"), elem)
+		print_token(Some("field"), elem);
+		field_proc(elem);
 	}
 
 	println!()
 }
 
-fn field_proc(value: &Field) {}
+fn field_proc(value: &Field) {
+	if let Some(id)=&value.ident{
+		print_token(Some("field_id"), &id)
+	}else {
+		println!("field_id:None");
+	}
+	
+	
+	
+}
 
 #[cfg(test)]
 mod tests {

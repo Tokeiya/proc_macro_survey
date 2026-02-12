@@ -1,4 +1,5 @@
 use crate::contents_format::Format;
+use crate::key::Key;
 use crate::node::Node;
 use crate::node_shape::Shape;
 use crate::prelude::Render;
@@ -12,7 +13,7 @@ pub struct RegularNode<K> {
 	contents: Option<String>,
 }
 
-impl<K: PartialEq + Hash + Clone> RegularNode<K> {
+impl<K: Key> RegularNode<K> {
 	pub fn new(key: K, shape: Shape, format: Format, contents: Option<String>) -> Self {
 		Self {
 			key,
@@ -38,7 +39,7 @@ impl<K: PartialEq + Hash + Clone> Render for RegularNode<K> {
 	}
 }
 
-impl<K: PartialEq + Hash + Clone> Node<K> for RegularNode<K> {
+impl<K: Key> Node<K> for RegularNode<K> {
 	fn id(&self) -> K {
 		self.key.clone()
 	}
@@ -56,6 +57,23 @@ impl<K: PartialEq + Hash + Clone> Node<K> for RegularNode<K> {
 mod tests {
 	use super::*;
 	use crate::render::test_helper::assert_render;
+
+	impl Render for i32 {
+		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
+			todo!()
+		}
+	}
+
+	impl Key for i32 {}
+
+	impl Render for String {
+		fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
+			todo!()
+		}
+	}
+
+	impl Key for String {}
+
 	#[test]
 	fn new() {
 		let fixture = RegularNode::new(
@@ -136,7 +154,7 @@ mod tests {
 			Format::Text,
 			Some("Hello world".to_string()),
 		);
-		assert_render(&fixture, "1 [\"Hello world\"]");
+		assert_render(&fixture, "1[\"Hello world\"]");
 
 		let fixture = RegularNode::new(
 			"Hello".to_string(),
@@ -144,6 +162,6 @@ mod tests {
 			Format::Markdown,
 			Some("Hello world".to_string()),
 		);
-		assert_render(&fixture, "Hello (\"`Hello world`\")");
+		assert_render(&fixture, "Hello(\"`Hello world`\")");
 	}
 }

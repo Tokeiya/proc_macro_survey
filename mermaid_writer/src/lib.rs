@@ -10,6 +10,7 @@ mod orientations;
 mod regular_link;
 mod regular_node;
 mod render;
+mod key;
 
 pub mod prelude {
 	pub use super::error::{Error, Result};
