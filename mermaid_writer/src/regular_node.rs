@@ -3,6 +3,7 @@ use crate::key::Key;
 use crate::node::Node;
 use crate::node_shape::Shape;
 use crate::prelude::Render;
+use crate::prelude::*;
 use std::io::Write;
 
 pub struct RegularNode<K> {
@@ -30,15 +31,15 @@ impl<K: Key> RegularNode<K> {
 }
 
 impl<K: Key> Render for RegularNode<K> {
-	fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
-		self.key.render(writer)?;
-		write!(writer, "@{{ shape: ")?;
-		self.shape.render(writer)?;
-		write!(writer, ",label: \"")?;
+	fn render(&self, write: &mut dyn Write) -> Result<()> {
+		self.key.render(write)?;
+		write!(write, "@{{ shape: ")?;
+		self.shape.render(write)?;
+		write!(write, ",label: \"")?;
 		if let Some(contents) = &self.contents {
-			write!(writer, "{contents}")?;
+			write!(write, "{contents}")?;
 		}
-		write!(writer, "\" }}")?;
+		write!(write, "\" }}")?;
 		Ok(())
 	}
 }

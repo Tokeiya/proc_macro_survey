@@ -1,4 +1,5 @@
-pub enum Directions {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
 	Oneway,
 	Both,
 	None,

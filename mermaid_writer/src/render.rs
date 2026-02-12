@@ -1,7 +1,7 @@
 use crate::prelude::*;
-use std::io::Write as IoWrite;
+use std::io::Write;
 pub trait Render {
-	fn render(&self, writer: &mut dyn IoWrite) -> Result<()>;
+	fn render(&self, write: &mut dyn Write) -> Result<()>;
 }
 
 #[cfg(test)]

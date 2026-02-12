@@ -1,4 +1,4 @@
-use crate::prelude::Render;
+use crate::prelude::*;
 use std::io::Write;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -21,7 +21,7 @@ pub enum Shape {
 }
 
 impl Render for Shape {
-	fn render(&self, writer: &mut dyn Write) -> crate::error::Result<()> {
+	fn render(&self, write: &mut dyn Write) -> Result<()> {
 		let value = match self {
 			Shape::Rect => "rect",
 			Shape::Rounded => "rounded",
@@ -40,7 +40,7 @@ impl Render for Shape {
 			Shape::Other(o) => o,
 		};
 
-		write!(writer, "{}", value)?;
+		write!(write, "{}", value)?;
 		Ok(())
 	}
 }
