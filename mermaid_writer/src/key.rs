@@ -3,7 +3,7 @@ use std::hash::Hash;
 pub trait Key: Eq + Hash + Clone + Render {}
 
 #[cfg(test)]
-pub(super) mod test_helper {
+pub(crate) mod test_helper {
 	use crate::key::Key;
 	use crate::prelude::Render;
 	use crate::prelude::*;

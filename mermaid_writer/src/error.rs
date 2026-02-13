@@ -7,6 +7,6 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
 	#[error(transparent)]
 	IoError(#[from] IoError),
-	#[error("Inconsistency between line shape and arrow shape")]
+	#[error("Inconsistency between line shape ,arrow shape and contents")]
 	InconsistencyShapes,
 }

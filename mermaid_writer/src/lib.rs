@@ -3,7 +3,7 @@ mod contents_format;
 mod direction;
 mod error;
 mod flowcharts;
-mod key;
+pub mod key;
 pub mod line_shape;
 mod link;
 mod node;
@@ -26,5 +26,5 @@ pub mod prelude {
 
 #[cfg(test)]
 pub mod test_prelude {
-	pub use crate::render::test_helper::{assert, assert_render};
+	pub(crate) use crate::render::test_helper::{assert, assert_render};
 }
