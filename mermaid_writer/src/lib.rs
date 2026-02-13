@@ -25,6 +25,4 @@ pub mod prelude {
 }
 
 #[cfg(test)]
-pub mod test_prelude {
-	pub(crate) use crate::render::test_helper::{assert, assert_render};
-}
+pub mod test_prelude {}

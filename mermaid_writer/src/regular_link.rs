@@ -1,4 +1,4 @@
-use crate::arrow_shape::{Shape as ArrowShape, Shape};
+use crate::arrow_shape::Shape as ArrowShape;
 use crate::contents_format::Format;
 use crate::direction::Direction;
 use crate::line_shape::{LineStyle, Shape as LineShape};
@@ -198,7 +198,6 @@ impl<K: Key> Render for RegularLink<K> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::key::test_helper;
 	use crate::render::test_helper::assert_render;
 
 	#[test]

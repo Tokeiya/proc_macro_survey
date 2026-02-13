@@ -1,7 +1,6 @@
 use crate::contents_format::Format;
-use crate::prelude::Render;
-use std::hash::Hash;
 use crate::key::Key;
+use crate::prelude::Render;
 
 pub trait Node<K: Key>: Render {
 	fn id(&self) -> K;
