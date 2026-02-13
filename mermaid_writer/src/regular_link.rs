@@ -1,11 +1,11 @@
-use crate::arrow_shape::Shape as ArrowShape;
+use crate::arrow_shape::{Shape as ArrowShape, Shape};
 use crate::contents_format::Format;
 use crate::direction::Direction;
 use crate::line_shape::{LineStyle, Shape as LineShape};
 use crate::prelude::*;
+use crate::render::Render;
 use std::hash::Hash;
 use std::io::Write;
-use std::net::UdpSocket;
 
 pub struct RegularLink<K> {
 	source: K,
@@ -111,11 +111,87 @@ impl<K: Key> RegularLink<K> {
 			Some((_, c)) => Some(c.as_str()),
 		}
 	}
+
+	fn textless_render(&self, write: &mut dyn Write) -> Result<()> {
+		if self.arrow_shape.is_none() {
+			match self.line_style {
+				LineStyle::Visible(LineShape::Normal) => write!(write, "---")?,
+				LineStyle::Visible(LineShape::Thick) => write!(write, "===")?,
+				LineStyle::Visible(LineShape::Dotted) => write!(write, "-.-")?,
+				LineStyle::Invisible => write!(write, "~~~")?,
+			}
+		} else {
+			match self.line_style {
+				LineStyle::Visible(LineShape::Normal) => write!(write, "--")?,
+				LineStyle::Visible(LineShape::Thick) => write!(write, "==")?,
+				LineStyle::Visible(LineShape::Dotted) => write!(write, "-.-")?,
+				LineStyle::Invisible => unreachable!(),
+			}
+		}
+
+		Ok(())
+	}
+
+	fn text_render(&self, write: &mut dyn Write) -> Result<()> {
+		let shape = match self.line_style {
+			LineStyle::Visible(s) => s,
+			LineStyle::Invisible => unreachable!(),
+		};
+
+		match shape {
+			LineShape::Normal => write!(write, "--")?,
+			LineShape::Thick => write!(write, "==")?,
+			LineShape::Dotted => write!(write, "-.")?,
+		}
+
+		match self.format().unwrap() {
+			Format::Text => write!(write, " \"")?,
+			Format::Markdown => write!(write, " \"`")?,
+		}
+
+		write!(write, "{}", self.contents().unwrap())?;
+
+		match self.format().unwrap() {
+			Format::Text => write!(write, "\" ")?,
+			Format::Markdown => write!(write, "`\" ")?,
+		}
+
+		match shape {
+			LineShape::Normal => write!(write, "--")?,
+			LineShape::Thick => write!(write, "==")?,
+			LineShape::Dotted => write!(write, ".-")?,
+		}
+		Ok(())
+	}
 }
 
-impl<K: PartialEq + Hash + Clone> Render for RegularLink<K> {
+impl<K: Key> Render for RegularLink<K> {
 	fn render(&self, write: &mut dyn Write) -> Result<()> {
-		todo!()
+		self.source.render(write)?;
+
+		match self.arrow_shape {
+			None => write!(write, " ")?,
+			Some(ArrowShape::Arrow) => write!(write, " <")?,
+			Some(ArrowShape::Cross) => write!(write, " x")?,
+			Some(ArrowShape::Circle) => write!(write, " o")?,
+		}
+
+		if self.contents.is_some() {
+			self.text_render(write)?;
+		} else {
+			self.textless_render(write)?;
+		};
+
+		match self.arrow_shape {
+			None => write!(write, " ")?,
+			Some(ArrowShape::Arrow) => write!(write, "> ")?,
+			Some(ArrowShape::Cross) => write!(write, "x ")?,
+			Some(ArrowShape::Circle) => write!(write, "o ")?,
+		}
+
+		self.target.render(write)?;
+		write!(write, "\n")?;
+		Ok(())
 	}
 }
 
@@ -296,5 +372,30 @@ mod tests {
 			Some((Format::Markdown, "link".to_string())),
 		);
 		assert_eq!(fixture.contents(), Some("link"));
+	}
+
+	#[test]
+	fn render() {
+		let fixture = RegularLink::invisible(10, 20);
+		assert_render(&fixture, "10 ~~~ 20\n");
+
+		let fixture = RegularLink::oneway(
+			"node1".to_string(),
+			"node2".to_string(),
+			LineShape::Thick,
+			ArrowShape::Cross,
+			Some((Format::Text, "link".to_string())),
+		);
+
+		assert_render(&fixture, "node1 x== \"link\" ==x node2\n");
+
+		let fixture = RegularLink::both(
+			10,
+			20,
+			LineShape::Dotted,
+			ArrowShape::Circle,
+			Some((Format::Markdown, "markdown".to_string())),
+		);
+		assert_render(&fixture, "10 o-. \"`markdown`\" .-o 20\n");
 	}
 }
