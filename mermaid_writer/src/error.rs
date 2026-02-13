@@ -7,6 +7,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
 	#[error(transparent)]
 	IoError(#[from] IoError),
-	#[error("Inconsistency between line shape ,arrow shape and contents")]
-	InconsistencyShapes,
+	#[error("Node with same id already exists")]
+	NodeAlreadyExists,
+	#[error("Link with same id already exists")]
+	LinkAlreadyExists,
 }
