@@ -11,4 +11,8 @@ pub enum Error<T> {
 	NodeAlreadyExists(T),
 	#[error("Link with same id already exists,scr:{0},tgt:{1}")]
 	LinkAlreadyExists(T, T),
+	#[error("Key not found:{0}")]
+	KeyNotFound(T),
+	#[error("Source and target keys are the same:{0}")]
+	ScrTgtSameKey(T),
 }

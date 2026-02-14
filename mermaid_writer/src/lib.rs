@@ -14,12 +14,14 @@ pub mod regular_node;
 pub mod render;
 
 pub mod prelude {
+	pub use super::arrow_shape::Shape as ArrowShape;
 	pub use super::error::{Error, Result};
 	pub use super::flowcharts::{Connection, Flowchart};
 	pub use super::key::Key;
-	pub use super::line_style::{Shape, Style};
+	pub use super::line_style::{Shape as LineShape, Style as LineStyle};
 	pub use super::link::Link;
 	pub use super::node::Node;
+	pub use super::node_shape::Shape as NodeShape;
 	pub use super::orientations::Orientation;
 	pub use super::render::Render;
 }

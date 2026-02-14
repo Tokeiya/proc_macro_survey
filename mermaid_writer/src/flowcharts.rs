@@ -31,8 +31,8 @@ impl<K: Key> Flowchart<K> {
 		todo!()
 	}
 
-	pub fn add_link<L: Link<K>>(&mut self, link: K) -> Result<K, K> {
-		_ = link.clone();
+	pub fn add_link<L: Link<K>>(&mut self, link: L) -> Result<K, K> {
+		_ = link;
 		todo!()
 	}
 
@@ -56,8 +56,6 @@ impl<K: Key> Render for Flowchart<K> {
 mod tests {
 	use super::*;
 	use crate::key::test_helper;
-	use crate::line_style::{Shape as LineShape, Style};
-	use crate::node_shape::Shape as NodeShape;
 	use crate::prelude::*;
 	use crate::regular_link::RegularLink;
 	use crate::regular_node::RegularNode;
@@ -90,6 +88,33 @@ mod tests {
 			NodeShape::Rect,
 			Some("Rect".to_string()),
 		));
-		todo!()
+		let err = match err {
+			Ok(_) => unreachable!(),
+			Err(e) => e,
+		};
+
+		assert!(matches!(err, Error::NodeAlreadyExists(i) if i==42));
+	}
+
+	#[test]
+	fn add_link() {
+		let mut fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		let link = RegularLink::oneway(10, 20, LineShape::Dotted, ArrowShape::Arrow, None);
+		let act = fixture.add_link(link);
+		assert!(matches!(act,Err(Error::KeyNotFound(k)) if k==10));
+		assert_eq!(fixture.links.len(), 0);
+
+		_ = fixture.add_node(RegularNode::new(42, NodeShape::Diamond, None));
+		let act = fixture.add_link(RegularLink::oneway(
+			42,
+			42,
+			LineShape::Dotted,
+			ArrowShape::Arrow,
+			None,
+		));
+		assert!(matches!(act,Err(Error::ScrTgtSameKey(i))if i==42));
+		assert_eq!(fixture.links.len(), 0);
+
+		_ = fixture.add_node(RegularNode::new(24, NodeShape::Hex, None));
 	}
 }
