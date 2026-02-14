@@ -1,17 +1,16 @@
 use crate::arrow_shape::Shape as ArrowShape;
 use crate::contents_format::Format;
 use crate::direction::Direction;
-use crate::line_shape::{LineStyle, Shape as LineShape};
+use crate::line_style::{Shape as LineShape, Style};
 use crate::prelude::*;
 use crate::render::Render;
-use std::hash::Hash;
 use std::io::Write;
 
 pub struct RegularLink<K> {
 	source: K,
 	target: K,
 	direction: Direction,
-	line_style: LineStyle,
+	line_style: Style,
 	arrow_shape: Option<ArrowShape>,
 	contents: Option<(Format, String)>,
 }
@@ -22,7 +21,7 @@ impl<K: Key> RegularLink<K> {
 			source,
 			target,
 			direction: Direction::Open,
-			line_style: LineStyle::Invisible,
+			line_style: Style::Invisible,
 			arrow_shape: None,
 			contents: None,
 		}
@@ -39,7 +38,7 @@ impl<K: Key> RegularLink<K> {
 			source,
 			target,
 			direction: Direction::Oneway,
-			line_style: LineStyle::Visible(line_shape),
+			line_style: Style::Visible(line_shape),
 			arrow_shape: Some(arrow_shape),
 			contents,
 		}
@@ -56,7 +55,7 @@ impl<K: Key> RegularLink<K> {
 			source,
 			target,
 			direction: Direction::Both,
-			line_style: LineStyle::Visible(line_shape),
+			line_style: Style::Visible(line_shape),
 			arrow_shape: Some(arrow_shape),
 			contents,
 		}
@@ -72,7 +71,7 @@ impl<K: Key> RegularLink<K> {
 			source,
 			target,
 			direction: Direction::Open,
-			line_style: LineStyle::Visible(line_shape),
+			line_style: Style::Visible(line_shape),
 			arrow_shape: None,
 			contents,
 		}
@@ -81,17 +80,17 @@ impl<K: Key> RegularLink<K> {
 	fn textless_render(&self, write: &mut dyn Write) -> Result<()> {
 		if self.arrow_shape.is_none() {
 			match self.line_style {
-				LineStyle::Visible(LineShape::Normal) => write!(write, "---")?,
-				LineStyle::Visible(LineShape::Thick) => write!(write, "===")?,
-				LineStyle::Visible(LineShape::Dotted) => write!(write, "-.-")?,
-				LineStyle::Invisible => write!(write, "~~~")?,
+				Style::Visible(LineShape::Normal) => write!(write, "---")?,
+				Style::Visible(LineShape::Thick) => write!(write, "===")?,
+				Style::Visible(LineShape::Dotted) => write!(write, "-.-")?,
+				Style::Invisible => write!(write, "~~~")?,
 			}
 		} else {
 			match self.line_style {
-				LineStyle::Visible(LineShape::Normal) => write!(write, "--")?,
-				LineStyle::Visible(LineShape::Thick) => write!(write, "==")?,
-				LineStyle::Visible(LineShape::Dotted) => write!(write, "-.-")?,
-				LineStyle::Invisible => unreachable!(),
+				Style::Visible(LineShape::Normal) => write!(write, "--")?,
+				Style::Visible(LineShape::Thick) => write!(write, "==")?,
+				Style::Visible(LineShape::Dotted) => write!(write, "-.-")?,
+				Style::Invisible => unreachable!(),
 			}
 		}
 
@@ -100,8 +99,8 @@ impl<K: Key> RegularLink<K> {
 
 	fn text_render(&self, write: &mut dyn Write) -> Result<()> {
 		let shape = match self.line_style {
-			LineStyle::Visible(s) => s,
-			LineStyle::Invisible => unreachable!(),
+			Style::Visible(s) => s,
+			Style::Invisible => unreachable!(),
 		};
 
 		match shape {
@@ -140,7 +139,7 @@ impl<K: Key> Link<K> for RegularLink<K> {
 		self.target.clone()
 	}
 
-	fn line_style(&self) -> LineStyle {
+	fn line_style(&self) -> Style {
 		self.line_style
 	}
 
@@ -206,7 +205,7 @@ mod tests {
 	fn invisible() {
 		let fixture = RegularLink::invisible(10, 20);
 		assert_eq!(fixture.direction, Direction::Open);
-		assert_eq!(fixture.line_style, LineStyle::Invisible);
+		assert_eq!(fixture.line_style, Style::Invisible);
 		assert_eq!(fixture.arrow_shape, None);
 		assert_eq!(fixture.contents, None);
 	}
@@ -226,7 +225,7 @@ mod tests {
 		assert_eq!(fixture.direction, Direction::Oneway);
 		assert!(matches!(
 			fixture.line_style,
-			LineStyle::Visible(LineShape::Thick)
+			Style::Visible(LineShape::Thick)
 		));
 		assert_eq!(fixture.arrow_shape, Some(ArrowShape::Cross));
 		assert_eq!(fixture.contents, Some((Format::Text, "link".to_string())));
@@ -241,7 +240,7 @@ mod tests {
 		assert_eq!(fixture.direction, Direction::Both);
 		assert!(matches!(
 			fixture.line_style,
-			LineStyle::Visible(LineShape::Dotted)
+			Style::Visible(LineShape::Dotted)
 		));
 		assert_eq!(fixture.arrow_shape, Some(ArrowShape::Arrow));
 		assert_eq!(fixture.contents, None);
@@ -261,7 +260,7 @@ mod tests {
 		assert_eq!(fixture.direction, Direction::Open);
 		assert!(matches!(
 			fixture.line_style,
-			LineStyle::Visible(LineShape::Normal)
+			Style::Visible(LineShape::Normal)
 		));
 		assert_eq!(fixture.arrow_shape, None);
 		assert_eq!(
@@ -287,11 +286,11 @@ mod tests {
 		let fixture = RegularLink::oneway(1, 2, LineShape::Normal, ArrowShape::Arrow, None);
 		assert!(matches!(
 			fixture.line_style(),
-			LineStyle::Visible(LineShape::Normal)
+			Style::Visible(LineShape::Normal)
 		));
 
 		let fixture = RegularLink::invisible(1, 2);
-		assert_eq!(fixture.line_style(), LineStyle::Invisible);
+		assert_eq!(fixture.line_style(), Style::Invisible);
 	}
 
 	#[test]

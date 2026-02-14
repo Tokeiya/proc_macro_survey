@@ -1,4 +1,4 @@
-use super::error::{Error, Result};
+use super::error::Result;
 use crate::link::Link;
 use crate::node::Node;
 use crate::orientations::Orientation;
@@ -21,11 +21,18 @@ pub struct Flowchart<K: Key> {
 }
 
 impl<K: Key> Flowchart<K> {
+	pub fn new(orientation: Orientation) -> Self {
+		_ = orientation.clone();
+		todo!()
+	}
+
 	pub fn add_node<N: Node<K>>(&mut self, node: N) -> Result<K> {
+		_ = node.format();
 		todo!()
 	}
 
 	pub fn add_link<L: Link<K>>(&mut self, link: K) -> Result<K> {
+		_ = link.clone();
 		todo!()
 	}
 
@@ -46,6 +53,7 @@ impl<K: Key> Default for Flowchart<K> {
 
 impl<K: Key> Render for Flowchart<K> {
 	fn render(&self, write: &mut dyn Write) -> Result<()> {
+		_ = write.flush();
 		todo!()
 	}
 }

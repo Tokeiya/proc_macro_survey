@@ -1,26 +1,26 @@
 pub mod arrow_shape;
 mod contents_format;
 mod direction;
-mod error;
-mod flowcharts;
+pub mod error;
+pub mod flowcharts;
 pub mod key;
-pub mod line_shape;
-mod link;
-mod node;
+pub mod line_style;
+pub mod link;
+pub mod node;
 pub mod node_shape;
-mod orientations;
-mod regular_link;
-mod regular_node;
-mod render;
+pub mod orientations;
+pub mod regular_link;
+pub mod regular_node;
+pub mod render;
 
 pub mod prelude {
 	pub use super::error::{Error, Result};
+	pub use super::flowcharts::{Connection, Flowchart};
 	pub use super::key::Key;
+	pub use super::line_style::{Shape, Style};
 	pub use super::link::Link;
 	pub use super::node::Node;
 	pub use super::orientations::Orientation;
-	pub use super::regular_link::RegularLink;
-	pub use super::regular_node::RegularNode;
 	pub use super::render::Render;
 }
 
