@@ -78,40 +78,6 @@ impl<K: Key> RegularLink<K> {
 		}
 	}
 
-	pub fn source(&self) -> K {
-		self.source.clone()
-	}
-
-	pub fn target(&self) -> K {
-		self.target.clone()
-	}
-
-	pub fn line_style(&self) -> LineStyle {
-		self.line_style
-	}
-
-	pub fn arrow_shape(&self) -> Option<ArrowShape> {
-		self.arrow_shape
-	}
-
-	pub fn direction(&self) -> Direction {
-		self.direction
-	}
-
-	pub fn format(&self) -> Option<Format> {
-		match &self.contents {
-			None => None,
-			Some((f, _)) => Some(*f),
-		}
-	}
-
-	pub fn contents(&self) -> Option<&str> {
-		match &self.contents {
-			None => None,
-			Some((_, c)) => Some(c.as_str()),
-		}
-	}
-
 	fn textless_render(&self, write: &mut dyn Write) -> Result<()> {
 		if self.arrow_shape.is_none() {
 			match self.line_style {
@@ -162,6 +128,42 @@ impl<K: Key> RegularLink<K> {
 			LineShape::Dotted => write!(write, ".-")?,
 		}
 		Ok(())
+	}
+}
+
+impl<K: Key> Link<K> for RegularLink<K> {
+	fn source(&self) -> K {
+		self.source.clone()
+	}
+
+	fn target(&self) -> K {
+		self.target.clone()
+	}
+
+	fn line_style(&self) -> LineStyle {
+		self.line_style
+	}
+
+	fn arrow_shape(&self) -> Option<ArrowShape> {
+		self.arrow_shape
+	}
+
+	fn direction(&self) -> Direction {
+		self.direction
+	}
+
+	fn format(&self) -> Option<Format> {
+		match &self.contents {
+			None => None,
+			Some((f, _)) => Some(*f),
+		}
+	}
+
+	fn contents(&self) -> Option<&str> {
+		match &self.contents {
+			None => None,
+			Some((_, c)) => Some(c.as_str()),
+		}
 	}
 }
 
