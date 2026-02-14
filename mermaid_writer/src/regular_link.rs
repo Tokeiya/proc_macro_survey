@@ -77,7 +77,7 @@ impl<K: Key> RegularLink<K> {
 		}
 	}
 
-	fn textless_render(&self, write: &mut dyn Write) -> Result<()> {
+	fn textless_render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		if self.arrow_shape.is_none() {
 			match self.line_style {
 				Style::Visible(LineShape::Normal) => write!(write, "---")?,
@@ -97,7 +97,7 @@ impl<K: Key> RegularLink<K> {
 		Ok(())
 	}
 
-	fn text_render(&self, write: &mut dyn Write) -> Result<()> {
+	fn text_render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		let shape = match self.line_style {
 			Style::Visible(s) => s,
 			Style::Invisible => unreachable!(),
@@ -167,7 +167,7 @@ impl<K: Key> Link<K> for RegularLink<K> {
 }
 
 impl<K: Key> Render for RegularLink<K> {
-	fn render(&self, write: &mut dyn Write) -> Result<()> {
+	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		self.source.render(write)?;
 
 		match self.arrow_shape {

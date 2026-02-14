@@ -31,7 +31,7 @@ impl<K: Key> RegularNode<K> {
 }
 
 impl<K: Key> Render for RegularNode<K> {
-	fn render(&self, write: &mut dyn Write) -> Result<()> {
+	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		self.key.render(write)?;
 		write!(write, "@{{ shape: ")?;
 		self.shape.render(write)?;
@@ -47,6 +47,10 @@ impl<K: Key> Render for RegularNode<K> {
 impl<K: Key> Node<K> for RegularNode<K> {
 	fn id(&self) -> K {
 		self.key.clone()
+	}
+
+	fn shape(&self) -> Shape {
+		self.shape.clone()
 	}
 
 	fn format(&self) -> Format {
@@ -95,6 +99,15 @@ mod tests {
 
 		let fixture = RegularNode::textless_new(1, Shape::Rect);
 		assert_eq!(fixture.format(), Format::Markdown)
+	}
+
+	#[test]
+	fn shape() {
+		let fixture = RegularNode::textless_new(1, Shape::Rect);
+		assert_eq!(fixture.shape(), Shape::Rect);
+
+		let fixture = RegularNode::new(1, Shape::Circle, Some("Hello world".to_string()));
+		assert_eq!(fixture.shape(), Shape::Circle);
 	}
 
 	#[test]

@@ -26,12 +26,12 @@ impl<K: Key> Flowchart<K> {
 		todo!()
 	}
 
-	pub fn add_node<N: Node<K>>(&mut self, node: N) -> Result<K> {
+	pub fn add_node<N: Node<K>>(&mut self, node: N) -> Result<K, K> {
 		_ = node.format();
 		todo!()
 	}
 
-	pub fn add_link<L: Link<K>>(&mut self, link: K) -> Result<K> {
+	pub fn add_link<L: Link<K>>(&mut self, link: K) -> Result<K, K> {
 		_ = link.clone();
 		todo!()
 	}
@@ -45,15 +45,51 @@ impl<K: Key> Flowchart<K> {
 	}
 }
 
-impl<K: Key> Default for Flowchart<K> {
-	fn default() -> Self {
+impl<K: Key> Render for Flowchart<K> {
+	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
+		_ = write.flush();
 		todo!()
 	}
 }
 
-impl<K: Key> Render for Flowchart<K> {
-	fn render(&self, write: &mut dyn Write) -> Result<()> {
-		_ = write.flush();
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::key::test_helper;
+	use crate::line_style::{Shape as LineShape, Style};
+	use crate::node_shape::Shape as NodeShape;
+	use crate::prelude::*;
+	use crate::regular_link::RegularLink;
+	use crate::regular_node::RegularNode;
+	#[test]
+	fn new() {
+		let fixture = Flowchart::<i32>::new(Orientation::BottomToTop);
+		assert_eq!(fixture.orientation, Orientation::BottomToTop);
+		assert_eq!(fixture.links.len(), 0);
+		assert_eq!(fixture.nodes.len(), 0);
+	}
+
+	#[test]
+	fn add_node() {
+		let mut fixture = Flowchart::new(Orientation::BottomToTop);
+		let act = fixture
+			.add_node(RegularNode::new(
+				42,
+				NodeShape::Circle,
+				Some("Circle".to_string()),
+			))
+			.unwrap();
+		assert_eq!(act, 42);
+		assert_eq!(fixture.nodes.len(), 1);
+		let act = fixture.nodes.get(&42).unwrap();
+		assert_eq!(act.id(), 42);
+		assert_eq!(act.shape(), NodeShape::Circle);
+
+		let err = fixture.add_node(RegularNode::new(
+			42,
+			NodeShape::Rect,
+			Some("Rect".to_string()),
+		));
 		todo!()
 	}
 }

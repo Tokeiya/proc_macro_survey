@@ -10,7 +10,7 @@ pub(crate) mod test_helper {
 	use std::io::Write;
 
 	impl Render for i32 {
-		fn render(&self, write: &mut dyn Write) -> Result<()> {
+		fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 			write!(write, "{}", self)?;
 			Ok(())
 		}
@@ -19,7 +19,7 @@ pub(crate) mod test_helper {
 	impl Key for i32 {}
 
 	impl Render for String {
-		fn render(&self, write: &mut dyn Write) -> Result<()> {
+		fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 			write!(write, "{}", self)?;
 			Ok(())
 		}

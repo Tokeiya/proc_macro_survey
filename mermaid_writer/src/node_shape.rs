@@ -21,7 +21,7 @@ pub enum Shape {
 }
 
 impl Render for Shape {
-	fn render(&self, write: &mut dyn Write) -> Result<()> {
+	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		let value = match self {
 			Shape::Rect => "rect",
 			Shape::Rounded => "rounded",
