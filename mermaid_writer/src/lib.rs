@@ -23,6 +23,3 @@ pub mod prelude {
 	pub use super::orientations::Orientation;
 	pub use super::render::Render;
 }
-
-#[cfg(test)]
-pub mod test_prelude {}
