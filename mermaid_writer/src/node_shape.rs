@@ -1,3 +1,4 @@
+use super::error::*;
 use crate::prelude::*;
 use std::io::Write;
 

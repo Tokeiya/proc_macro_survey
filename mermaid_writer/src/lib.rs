@@ -16,7 +16,6 @@ pub mod render;
 
 pub mod prelude {
 	pub use super::arrow_shape::Shape as ArrowShape;
-	pub use super::error::{Error, Result};
 	pub use super::flowcharts::Flowchart;
 	pub use super::key::Key;
 	pub use super::line_style::{Shape as LineShape, Style as LineStyle};

@@ -1,6 +1,6 @@
 use crate::key::Key;
 use crate::link::Link;
-use std::fmt::{Display, Formatter};
+use std::fmt::Display;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub struct Connection<K> {

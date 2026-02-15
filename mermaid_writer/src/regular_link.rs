@@ -1,3 +1,4 @@
+use super::error::*;
 use crate::arrow_shape::Shape as ArrowShape;
 use crate::contents_format::Format;
 use crate::direction::Direction;

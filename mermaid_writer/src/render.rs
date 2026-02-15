@@ -1,5 +1,6 @@
-use crate::prelude::*;
+use crate::error::*;
 use std::io::Write;
+
 pub trait Render {
 	fn render(&self, write: &mut dyn Write) -> Result<(), ()>;
 }

@@ -1,4 +1,5 @@
 use super::error::Result;
+use crate::error::Error;
 use crate::link::Link;
 use crate::node::Node;
 use crate::orientations::Orientation;
@@ -71,7 +72,6 @@ impl<K: Key> Render for Flowchart<K> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::prelude::*;
 	use crate::regular_link::RegularLink;
 	use crate::regular_node::RegularNode;
 	use std::ptr;

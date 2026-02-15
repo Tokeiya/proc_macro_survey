@@ -1,4 +1,3 @@
-use crate::key::Key;
 use crate::prelude::Connection;
 use std::io::Error as IoError;
 use thiserror::Error as ThisError;
