@@ -66,12 +66,35 @@ impl<K: Key> Flowchart<K> {
 	pub fn title(&self) -> &str {
 		&self.title
 	}
-}
 
-impl<K: Key> Render for Flowchart<K> {
-	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
-		_ = write.flush();
-		todo!()
+	pub fn write<W: Write>(&self, mut write: W) -> Result<(), ()> {
+		writeln!(&mut write, "---")?;
+		writeln!(&mut write, "title:{}", self.title())?;
+		writeln!(&mut write, "---")?;
+
+		let tmp = match self.orientation {
+			Orientation::TopToBottom => "TB",
+			Orientation::TopDown => "TD",
+			Orientation::BottomToTop => "BT",
+			Orientation::RightToLeft => "RL",
+			Orientation::LeftToRight => "LR",
+		};
+
+		writeln!(&mut write, "flowchart {tmp}")?;
+
+		for node in self.nodes.values() {
+			write!(&mut write, "\t")?;
+			node.render(&mut write)?;
+			writeln!(&mut write)?;
+		}
+
+		for link in self.links.values() {
+			write!(&mut write, "\t")?;
+			link.render(&mut write)?;
+			writeln!(&mut write)?;
+		}
+
+		Ok(())
 	}
 }
 
