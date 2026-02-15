@@ -2,12 +2,12 @@ use super::error::Result;
 use crate::link::Link;
 use crate::node::Node;
 use crate::orientations::Orientation;
-use crate::prelude::Key;
+use crate::prelude::*;
 use crate::render::Render;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::io::Write;
-#[derive(PartialEq, Eq, Hash, Clone)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub struct Connection<K: Key> {
 	pub source: K,
 	pub target: K,
@@ -22,16 +22,24 @@ pub struct Flowchart<K: Key> {
 
 impl<K: Key> Flowchart<K> {
 	pub fn new(orientation: Orientation) -> Self {
-		_ = orientation.clone();
-		todo!()
+		Self {
+			orientation,
+			nodes: HashMap::new(),
+			links: HashMap::new(),
+		}
 	}
 
-	pub fn add_node<N: Node<K>>(&mut self, node: N) -> Result<K, K> {
-		_ = node.format();
-		todo!()
+	pub fn add_node<N: Node<K> + 'static>(&mut self, node: N) -> Result<K, K> {
+		let key = node.id();
+		if self.nodes.contains_key(&key) {
+			Err(Error::KeyNotFound(key))
+		} else {
+			assert!(self.nodes.insert(key.clone(), Box::new(node)).is_none());
+			Ok(key)
+		}
 	}
 
-	pub fn add_link<L: Link<K>>(&mut self, link: L) -> Result<K, K> {
+	pub fn add_link<L: Link<K>>(&mut self, link: L) -> Result<Connection<K>, K> {
 		_ = link;
 		todo!()
 	}
@@ -55,10 +63,10 @@ impl<K: Key> Render for Flowchart<K> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::key::test_helper;
 	use crate::prelude::*;
 	use crate::regular_link::RegularLink;
 	use crate::regular_node::RegularNode;
+	use std::ptr;
 	#[test]
 	fn new() {
 		let fixture = Flowchart::<i32>::new(Orientation::BottomToTop);
@@ -115,6 +123,74 @@ mod tests {
 		assert!(matches!(act,Err(Error::ScrTgtSameKey(i))if i==42));
 		assert_eq!(fixture.links.len(), 0);
 
-		_ = fixture.add_node(RegularNode::new(24, NodeShape::Hex, None));
+		_ = fixture
+			.add_node(RegularNode::new(24, NodeShape::Hex, None))
+			.unwrap();
+
+		let act = fixture.add_link(RegularLink::oneway(
+			24,
+			24,
+			LineShape::Normal,
+			ArrowShape::Arrow,
+			None,
+		));
+		assert!(matches!(act,Err(Error::ScrTgtSameKey(i))if i==24));
+		assert_eq!(fixture.links.len(), 0);
+
+		let act = fixture
+			.add_link(RegularLink::oneway(
+				42,
+				24,
+				LineShape::Normal,
+				ArrowShape::Arrow,
+				None,
+			))
+			.unwrap();
+		assert_eq!(act.source, 42);
+		assert_eq!(act.target, 24);
+		debug_assert_eq!(fixture.links.len(), 1);
+
+		let act = fixture
+			.add_link(RegularLink::oneway(
+				24,
+				42,
+				LineShape::Dotted,
+				ArrowShape::Circle,
+				None,
+			))
+			.unwrap();
+		assert_eq!(act.source, 24);
+		assert_eq!(act.target, 42);
+		assert_eq!(fixture.links.len(), 2);
+
+		let act = fixture
+			.add_link(RegularLink::oneway(
+				24,
+				42,
+				LineShape::Dotted,
+				ArrowShape::Circle,
+				None,
+			))
+			.unwrap_err();
+		assert!(matches!(act,Error::LinkAlreadyExists(i,j) if i==24 && j==42));
+		assert_eq!(fixture.links.len(), 2);
+	}
+
+	#[test]
+	fn links() {
+		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		assert!(ptr::eq(&fixture.links, fixture.links()));
+	}
+
+	#[test]
+	fn nodes() {
+		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		assert!(ptr::eq(&fixture.nodes, fixture.nodes()));
+	}
+
+	#[test]
+	fn orientation() {
+		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		assert_eq!(fixture.orientation, Orientation::TopDown);
 	}
 }
