@@ -1,7 +1,7 @@
 pub mod arrow_shape;
 mod connection;
 mod contents_format;
-mod direction;
+pub mod direction;
 pub mod error;
 pub mod flowcharts;
 pub mod key;
@@ -16,6 +16,7 @@ pub mod render;
 
 pub mod prelude {
 	pub use super::arrow_shape::Shape as ArrowShape;
+	pub use super::direction::Direction;
 	pub use super::flowcharts::Flowchart;
 	pub use super::key::Key;
 	pub use super::line_style::{Shape as LineShape, Style as LineStyle};
@@ -25,4 +26,5 @@ pub mod prelude {
 	pub use super::orientations::Orientation;
 	pub use super::render::Render;
 	pub use crate::connection::Connection;
+	pub use crate::contents_format::Format as ContentsFormat;
 }

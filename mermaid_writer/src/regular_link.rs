@@ -171,11 +171,15 @@ impl<K: Key> Render for RegularLink<K> {
 	fn render(&self, write: &mut dyn Write) -> Result<(), ()> {
 		self.source.render(write)?;
 
-		match self.arrow_shape {
-			None => write!(write, " ")?,
-			Some(ArrowShape::Arrow) => write!(write, " <")?,
-			Some(ArrowShape::Cross) => write!(write, " x")?,
-			Some(ArrowShape::Circle) => write!(write, " o")?,
+		if self.direction == Direction::Both {
+			match self.arrow_shape {
+				None => write!(write, " ")?,
+				Some(ArrowShape::Arrow) => write!(write, " <")?,
+				Some(ArrowShape::Cross) => write!(write, " x")?,
+				Some(ArrowShape::Circle) => write!(write, " o")?,
+			}
+		} else {
+			write!(write, " ")?;
 		}
 
 		if self.contents.is_some() {
@@ -184,15 +188,18 @@ impl<K: Key> Render for RegularLink<K> {
 			self.textless_render(write)?;
 		};
 
-		match self.arrow_shape {
-			None => write!(write, " ")?,
-			Some(ArrowShape::Arrow) => write!(write, "> ")?,
-			Some(ArrowShape::Cross) => write!(write, "x ")?,
-			Some(ArrowShape::Circle) => write!(write, "o ")?,
+		if self.direction != Direction::Open {
+			match self.arrow_shape {
+				None => write!(write, " ")?,
+				Some(ArrowShape::Arrow) => write!(write, "> ")?,
+				Some(ArrowShape::Cross) => write!(write, "x ")?,
+				Some(ArrowShape::Circle) => write!(write, "o ")?,
+			}
+		} else {
+			write!(write, " ")?;
 		}
 
 		self.target.render(write)?;
-		write!(write, "\n")?;
 		Ok(())
 	}
 }
@@ -378,7 +385,7 @@ mod tests {
 	#[test]
 	fn render() {
 		let fixture = RegularLink::invisible(10, 20);
-		assert_render(&fixture, "10 ~~~ 20\n");
+		assert_render(&fixture, "10 ~~~ 20");
 
 		let fixture = RegularLink::oneway(
 			"node1".to_string(),
@@ -388,7 +395,7 @@ mod tests {
 			Some((Format::Text, "link".to_string())),
 		);
 
-		assert_render(&fixture, "node1 x== \"link\" ==x node2\n");
+		assert_render(&fixture, "node1 == \"link\" ==x node2");
 
 		let fixture = RegularLink::both(
 			10,
@@ -397,6 +404,6 @@ mod tests {
 			ArrowShape::Circle,
 			Some((Format::Markdown, "markdown".to_string())),
 		);
-		assert_render(&fixture, "10 o-. \"`markdown`\" .-o 20\n");
+		assert_render(&fixture, "10 o-. \"`markdown`\" .-o 20");
 	}
 }

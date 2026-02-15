@@ -1,10 +1,8 @@
 mod add_assume;
 mod add_check;
 mod character_manipulator;
-
 use proc_macro::TokenStream;
 use syn::{Item, ItemEnum, parse_macro_input};
-
 
 #[proc_macro_attribute]
 pub fn dummy_a(_: TokenStream, input: TokenStream) -> TokenStream {
@@ -25,7 +23,6 @@ pub fn dummy_c(_: TokenStream, input: TokenStream) -> TokenStream {
 pub fn dummy_d(_: TokenStream, input: TokenStream) -> TokenStream {
 	input
 }
-
 
 #[proc_macro_attribute]
 pub fn add_check(_: TokenStream, input: TokenStream) -> TokenStream {

@@ -4,7 +4,6 @@ use crate::link::Link;
 use crate::node::Node;
 use crate::orientations::Orientation;
 use crate::prelude::*;
-use crate::render::Render;
 use std::collections::HashMap;
 use std::io::Write;
 
@@ -67,10 +66,10 @@ impl<K: Key> Flowchart<K> {
 		&self.title
 	}
 
-	pub fn write<W: Write>(&self, mut write: W) -> Result<(), ()> {
-		writeln!(&mut write, "---")?;
-		writeln!(&mut write, "title:{}", self.title())?;
-		writeln!(&mut write, "---")?;
+	pub fn write<W: Write>(&self, write: &mut W) -> Result<(), ()> {
+		writeln!(write, "---")?;
+		writeln!(write, "title:{}", self.title())?;
+		writeln!(write, "---")?;
 
 		let tmp = match self.orientation {
 			Orientation::TopToBottom => "TB",
@@ -80,18 +79,18 @@ impl<K: Key> Flowchart<K> {
 			Orientation::LeftToRight => "LR",
 		};
 
-		writeln!(&mut write, "flowchart {tmp}")?;
+		writeln!(write, "flowchart {tmp}")?;
 
 		for node in self.nodes.values() {
-			write!(&mut write, "\t")?;
-			node.render(&mut write)?;
-			writeln!(&mut write)?;
+			write!(write, "\t")?;
+			node.render(write)?;
+			writeln!(write)?;
 		}
 
 		for link in self.links.values() {
-			write!(&mut write, "\t")?;
-			link.render(&mut write)?;
-			writeln!(&mut write)?;
+			write!(write, "\t")?;
+			link.render(write)?;
+			writeln!(write)?;
 		}
 
 		Ok(())

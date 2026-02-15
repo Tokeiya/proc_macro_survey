@@ -9,7 +9,8 @@ syn = { version = "*", features = ["full"] }
 quote = "*"
 proc-macro2 = "*"
 regex = "*"
-
+mermaid_writer = { path = "../mermaid_writer" }
+clap = { version = "4.5.58", features = ["derive"] }
 
 
 [features]
