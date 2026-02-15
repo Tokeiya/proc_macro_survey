@@ -10,14 +10,16 @@ use std::io::Write;
 
 //think about link duplication and node duplication.
 pub struct Flowchart<K: Key> {
+	title: String,
 	orientation: Orientation,
 	nodes: HashMap<K, Box<dyn Node<K>>>,
 	links: HashMap<Connection<K>, Box<dyn Link<K>>>,
 }
 
 impl<K: Key> Flowchart<K> {
-	pub fn new(orientation: Orientation) -> Self {
+	pub fn new(title: String, orientation: Orientation) -> Self {
 		Self {
+			title,
 			orientation,
 			nodes: HashMap::new(),
 			links: HashMap::new(),
@@ -60,6 +62,10 @@ impl<K: Key> Flowchart<K> {
 	pub fn links(&self) -> &HashMap<Connection<K>, Box<dyn Link<K>>> {
 		&self.links
 	}
+
+	pub fn title(&self) -> &str {
+		&self.title
+	}
 }
 
 impl<K: Key> Render for Flowchart<K> {
@@ -77,7 +83,7 @@ mod tests {
 	use std::ptr;
 	#[test]
 	fn new() {
-		let fixture = Flowchart::<i32>::new(Orientation::BottomToTop);
+		let fixture = Flowchart::<i32>::new("title".to_string(), Orientation::BottomToTop);
 		assert_eq!(fixture.orientation, Orientation::BottomToTop);
 		assert_eq!(fixture.links.len(), 0);
 		assert_eq!(fixture.nodes.len(), 0);
@@ -85,7 +91,7 @@ mod tests {
 
 	#[test]
 	fn add_node() {
-		let mut fixture = Flowchart::new(Orientation::BottomToTop);
+		let mut fixture = Flowchart::new("title".to_string(), Orientation::BottomToTop);
 		let act = fixture
 			.add_node(RegularNode::new(
 				42,
@@ -114,7 +120,7 @@ mod tests {
 
 	#[test]
 	fn add_link() {
-		let mut fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		let mut fixture = Flowchart::<i32>::new("title".to_string(), Orientation::TopDown);
 		let link = RegularLink::oneway(10, 20, LineShape::Dotted, ArrowShape::Arrow, None);
 		let act = fixture.add_link(link);
 		assert!(matches!(act,Err(Error::KeyNotFound(k)) if k==10));
@@ -189,19 +195,24 @@ mod tests {
 
 	#[test]
 	fn links() {
-		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		let fixture = Flowchart::<i32>::new("title".to_string(), Orientation::TopDown);
 		assert!(ptr::eq(&fixture.links, fixture.links()));
 	}
 
 	#[test]
 	fn nodes() {
-		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		let fixture = Flowchart::<i32>::new("title".to_string(), Orientation::TopDown);
 		assert!(ptr::eq(&fixture.nodes, fixture.nodes()));
 	}
 
 	#[test]
 	fn orientation() {
-		let fixture = Flowchart::<i32>::new(Orientation::TopDown);
+		let fixture = Flowchart::<i32>::new("titi".to_string(), Orientation::TopDown);
 		assert_eq!(fixture.orientation, Orientation::TopDown);
+	}
+	#[test]
+	fn title() {
+		let fixture = Flowchart::<i32>::new("title".to_string(), Orientation::TopDown);
+		assert_eq!(fixture.title(), "title");
 	}
 }
