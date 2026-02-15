@@ -5,13 +5,7 @@ use crate::orientations::Orientation;
 use crate::prelude::*;
 use crate::render::Render;
 use std::collections::HashMap;
-use std::hash::Hash;
 use std::io::Write;
-#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
-pub struct Connection<K: Key> {
-	pub source: K,
-	pub target: K,
-}
 
 //think about link duplication and node duplication.
 pub struct Flowchart<K: Key> {
@@ -32,16 +26,30 @@ impl<K: Key> Flowchart<K> {
 	pub fn add_node<N: Node<K> + 'static>(&mut self, node: N) -> Result<K, K> {
 		let key = node.id();
 		if self.nodes.contains_key(&key) {
-			Err(Error::KeyNotFound(key))
+			Err(Error::NodeAlreadyExists(key))
 		} else {
 			assert!(self.nodes.insert(key.clone(), Box::new(node)).is_none());
 			Ok(key)
 		}
 	}
 
-	pub fn add_link<L: Link<K>>(&mut self, link: L) -> Result<Connection<K>, K> {
-		_ = link;
-		todo!()
+	pub fn add_link<L: Link<K> + 'static>(&mut self, link: L) -> Result<Connection<K>, K> {
+		if link.source() == link.target() {
+			Err(Error::ScrTgtSameKey(link.source().clone()))
+		} else if !self.nodes.contains_key(&link.source()) {
+			Err(Error::KeyNotFound(link.source().clone()))
+		} else if !self.nodes.contains_key(&link.target()) {
+			Err(Error::KeyNotFound(link.target().clone()))
+		} else {
+			let con = Connection::from(&link);
+
+			if self.links.contains_key(&con) {
+				Err(Error::LinkAlreadyExists(con))
+			} else {
+				self.links.insert(con.clone(), Box::new(link));
+				Ok(con)
+			}
+		}
 	}
 
 	pub fn nodes(&self) -> &HashMap<K, Box<dyn Node<K>>> {
@@ -123,6 +131,9 @@ mod tests {
 		assert!(matches!(act,Err(Error::ScrTgtSameKey(i))if i==42));
 		assert_eq!(fixture.links.len(), 0);
 
+		let act = fixture.add_link(RegularLink::invisible(42, 43));
+		assert!(matches!(act,Err(Error::KeyNotFound(i))if i==43));
+
 		_ = fixture
 			.add_node(RegularNode::new(24, NodeShape::Hex, None))
 			.unwrap();
@@ -172,7 +183,7 @@ mod tests {
 				None,
 			))
 			.unwrap_err();
-		assert!(matches!(act,Error::LinkAlreadyExists(i,j) if i==24 && j==42));
+		assert!(matches!(act,Error::LinkAlreadyExists(con) if con.source==24 && con.target==42));
 		assert_eq!(fixture.links.len(), 2);
 	}
 
