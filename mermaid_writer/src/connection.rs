@@ -19,13 +19,33 @@ impl<K: Key, L: Link<K>> From<&L> for Connection<K> {
 
 impl<K: PartialOrd> PartialOrd for Connection<K> {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-		todo!()
+		Some(
+			match (
+				self.source.partial_cmp(&other.source).unwrap(),
+				self.target.partial_cmp(&other.target).unwrap(),
+			) {
+				(Ordering::Greater, _) => Ordering::Greater,
+				(Ordering::Less, _) => Ordering::Less,
+				(Ordering::Equal, Ordering::Greater) => Ordering::Greater,
+				(Ordering::Equal, Ordering::Less) => Ordering::Less,
+				(Ordering::Equal, Ordering::Equal) => Ordering::Equal,
+			},
+		)
 	}
 }
 
 impl<K: Ord> Ord for Connection<K> {
 	fn cmp(&self, other: &Self) -> Ordering {
-		todo!()
+		match (
+			self.source.cmp(&other.source),
+			self.target.cmp(&other.target),
+		) {
+			(Ordering::Greater, _) => Ordering::Greater,
+			(Ordering::Less, _) => Ordering::Less,
+			(Ordering::Equal, Ordering::Greater) => Ordering::Greater,
+			(Ordering::Equal, Ordering::Less) => Ordering::Less,
+			(Ordering::Equal, Ordering::Equal) => Ordering::Equal,
+		}
 	}
 }
 
@@ -34,6 +54,8 @@ mod tests {
 	use super::*;
 	use crate::prelude::*;
 	use crate::regular_link::RegularLink;
+	use crate::render::test_helper::assert;
+
 	#[test]
 	fn from_ref() {
 		let link = RegularLink::oneway(10, 20, LineShape::Normal, ArrowShape::Arrow, None);
@@ -44,21 +66,93 @@ mod tests {
 
 	#[test]
 	fn partial_ord() {
-		let a = f64::NAN;
-		let b = f64::NAN;
+		let pivot = Connection {
+			source: 50,
+			target: 42,
+		};
 
-		let a = a.total_cmp(&b);
+		let act = pivot
+			.partial_cmp(&Connection {
+				source: 50,
+				target: 42,
+			})
+			.unwrap();
+		assert!(matches!(act, Ordering::Equal));
 
-		// let pivot = Connection {
-		// 	source: 50,
-		// 	target: 42,
-		// };
-		// let act = pivot
-		// 	.partial_cmp(&Connection {
-		// 		source: 50,
-		// 		target: 42,
-		// 	})
-		// 	.unwrap();
-		// assert!(matches!(act, Ordering::Equal));
+		let act = pivot
+			.partial_cmp(&Connection {
+				source: 50,
+				target: 41,
+			})
+			.unwrap();
+		assert!(matches!(act, Ordering::Greater));
+
+		let act = pivot.partial_cmp(&Connection {
+			source: 50,
+			target: 43,
+		});
+		assert!(matches!(act, Some(Ordering::Less)));
+
+		let act = pivot.partial_cmp(&Connection {
+			source: 49,
+			target: 42,
+		});
+		assert!(matches!(act, Some(Ordering::Greater)));
+
+		let act = pivot.partial_cmp(&Connection {
+			source: 49,
+			target: 43,
+		});
+		assert!(matches!(act, Some(Ordering::Greater)));
+
+		let act = pivot.partial_cmp(&Connection {
+			source: 51,
+			target: 43,
+		});
+		assert!(matches!(act, Some(Ordering::Less)));
+	}
+
+	#[test]
+	fn ord() {
+		let pivot = Connection {
+			source: 50,
+			target: 42,
+		};
+
+		let act = pivot.cmp(&pivot);
+		assert!(matches!(act, Ordering::Equal));
+
+		let act = pivot.cmp(&Connection {
+			source: 50,
+			target: 41,
+		});
+		assert!(matches!(act, Ordering::Greater));
+
+		let act = pivot.cmp(&Connection {
+			source: 50,
+			target: 43,
+		});
+		assert!(matches!(act, Ordering::Less));
+
+		let act = pivot.cmp(&Connection {
+			source: 49,
+			target: 42,
+		});
+
+		assert!(matches!(act, Ordering::Greater));
+
+		let act = pivot.cmp(&Connection {
+			source: 49,
+			target: 43,
+		});
+
+		assert!(matches!(act, Ordering::Greater));
+
+		let act = pivot.cmp(&Connection {
+			source: 51,
+			target: 43,
+		});
+
+		assert!(matches!(act, Ordering::Less));
 	}
 }
