@@ -4,9 +4,7 @@ use mermaid_writer::line_style::Style;
 use mermaid_writer::link::Link;
 use mermaid_writer::node::Node as OtherNode;
 use mermaid_writer::node_shape::Shape;
-use mermaid_writer::prelude::{
-	ArrowShape, ContentsFormat, Direction, LineShape, Node, NodeShape, Render,
-};
+use mermaid_writer::prelude::*;
 use mermaid_writer::regular_link::RegularLink;
 use mermaid_writer::regular_node::RegularNode;
 use proc_macro2::Ident;
@@ -44,7 +42,7 @@ impl Node<Integer> for ElementNode {
 		self.0.shape()
 	}
 
-	fn format(&self) -> mermaid_writer::prelude::ContentsFormat {
+	fn format(&self) -> ContentsFormat {
 		self.0.format()
 	}
 
