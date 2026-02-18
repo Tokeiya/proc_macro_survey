@@ -1,30 +1,29 @@
-```mermaid
 ---
 title:enum
 ---
 flowchart BT
-	4@{ shape: lean-l,label: "where 'a : 'b ," }
-	2@{ shape: lean-l,label: "< 'a , 'b , T : 'b >" }
-	22@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_d\")]" }
-	8@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
+	14@{ shape: stadium,label: "NamedVariant" }
 	17@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
+	18@{ shape: odd,label: "value" }
 	20@{ shape: subroutine,label: "#35; [doc = \"foo\"]" }
 	21@{ shape: stadium,label: "UnitVariant" }
+	13@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
+	22@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_d\")]" }
 	1@{ shape: hexagon,label: "EnumSample" }
-	3@{ shape: lean-l,label: "< 'a , 'b , T >" }
-	5@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
+	10@{ shape: odd,label: "(& 'b T , i32)" }
 	6@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
 	11@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
-	13@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
-	9@{ shape: subroutine,label: "#35; [doc = \"document\"]" }
-	14@{ shape: stadium,label: "NamedVariant" }
-	10@{ shape: odd,label: "(& 'b T , i32)" }
+	2@{ shape: lean-l,label: "< 'a , 'b , T : 'b >" }
 	15@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
-	18@{ shape: odd,label: "value" }
+	5@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
+	8@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
+	19@{ shape: odd,label: "tuple" }
+	3@{ shape: lean-l,label: "< 'a , 'b , T >" }
+	4@{ shape: lean-l,label: "where 'a : 'b ," }
 	7@{ shape: stadium,label: "TupleVariant" }
+	9@{ shape: subroutine,label: "#35; [doc = \"document\"]" }
 	12@{ shape: odd,label: "& 'a str" }
 	16@{ shape: odd,label: "reference" }
-	19@{ shape: odd,label: "tuple" }
 	1 -- "impl" --> 2
 	1 -- "type" --> 3
 	1 -- "where" --> 4
@@ -46,4 +45,3 @@ flowchart BT
 	16 -- "attr" --> 17
 	19 -- "attr" --> 20
 	21 -- "attr" --> 22
-```

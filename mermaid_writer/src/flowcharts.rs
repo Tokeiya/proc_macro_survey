@@ -97,6 +97,41 @@ impl<K: Key> Flowchart<K> {
 	}
 }
 
+impl<K: Key + Ord> Flowchart<K> {
+	pub fn ord_write<W: Write>(&self, write: &mut W) -> Result<(), ()> {
+		writeln!(write, "---")?;
+		writeln!(write, "title:{}", self.title())?;
+		writeln!(write, "---")?;
+
+		let tmp = match self.orientation {
+			Orientation::TopToBottom => "TB",
+			Orientation::TopDown => "TD",
+			Orientation::BottomToTop => "BT",
+			Orientation::RightToLeft => "RL",
+			Orientation::LeftToRight => "LR",
+		};
+
+		writeln!(write, "flowchart {tmp}")?;
+
+		for node in self.nodes.values() {
+			write!(write, "\t")?;
+			node.render(write)?;
+			writeln!(write)?;
+		}
+
+		let mut tmp = self.links.iter().collect::<Vec<_>>();
+		tmp.sort_by(|a, b| a.0.cmp(b.0));
+
+		for (_, link) in tmp.iter() {
+			write!(write, "\t")?;
+			link.render(write)?;
+			writeln!(write)?;
+		}
+
+		Ok(())
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;

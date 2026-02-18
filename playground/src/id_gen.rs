@@ -3,7 +3,7 @@ use mermaid_writer::prelude::{Key, Render};
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
 pub struct Integer(usize);
 
 impl Render for Integer {
