@@ -8,7 +8,8 @@ use playground::prelude::{ElementLink, ElementNode, IdGen, Integer};
 use quote::{ToTokens, quote};
 use syn::{
 	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Type, TypeArray, TypeBareFn,
-	TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, Variant, parse_quote,
+	TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, TypeParen, TypePath, TypePtr,
+	TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
 };
 
 #[cfg(feature = "dummy_a")]
@@ -283,6 +284,115 @@ fn never_proc(
 	Ok(())
 }
 
+fn paren_proc(
+	ty: &TypeParen,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Paren");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn path_proc(
+	ty: &TypePath,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Path");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn ptr_proc(
+	ty: &TypePtr,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Ptr");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn reference_proc(
+	ty: &TypeReference,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Reference");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn slice_proc(
+	ty: &TypeSlice,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Slice");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn trait_object_proc(
+	ty: &TypeTraitObject,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "TraitObject");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn tuple_proc(
+	ty: &TypeTuple,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Tuple");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	for elem in ty.elems.iter() {
+		type_proc(elem, &cursor, flow, id_gen)?
+	}
+
+	Ok(())
+}
+
 fn type_proc(
 	ty: &Type,
 	parent: &Integer,
@@ -299,15 +409,14 @@ fn type_proc(
 		Type::Infer(x) => infer_proc(x, &cursor, flow, id_gen),
 		Type::Macro(x) => macro_proc(x, &cursor, flow, id_gen),
 		Type::Never(x) => never_proc(x, &cursor, flow, id_gen),
-		Type::Paren(x) => todo!(),
-		Type::Path(x) => todo!(),
-		Type::Ptr(x) => todo!(),
-		Type::Reference(x) => todo!(),
-		Type::Slice(x) => todo!(),
-		Type::TraitObject(x) => todo!(),
-		Type::Tuple(x) => todo!(),
-		Type::Verbatim(x) => todo!(),
-		_ => todo!(),
+		Type::Paren(x) => paren_proc(x, &cursor, flow, id_gen),
+		Type::Path(x) => path_proc(x, &cursor, flow, id_gen),
+		Type::Ptr(x) => ptr_proc(x, &cursor, flow, id_gen),
+		Type::Reference(x) => reference_proc(x, &cursor, flow, id_gen),
+		Type::Slice(x) => slice_proc(x, &cursor, flow, id_gen),
+		Type::TraitObject(x) => trait_object_proc(x, &cursor, flow, id_gen),
+		Type::Tuple(x) => tuple_proc(x, &cursor, flow, id_gen),
+		_ => unreachable!(),
 	}
 }
 
