@@ -47,7 +47,7 @@ pub fn main() {
 		#[cfg(feature = "dummy_b")]
 		#[doc = "document"]
 		TupleVariant(
-			#[cfg(feature = "dummy_b")] (&'b T, i32),
+			#[cfg(feature = "dummy_b")] (&'b T, i32,i64),
 			#[cfg(feature = "dummy_b")] &'a str,
 		),
 		#[cfg(feature = "dummy_c")]
