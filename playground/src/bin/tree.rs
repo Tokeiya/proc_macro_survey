@@ -7,8 +7,8 @@ use mermaid_writer::regular_node::RegularNode;
 use playground::prelude::{ElementLink, ElementNode, IdGen, Integer};
 use quote::{ToTokens, quote};
 use syn::{
-	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Type, TypeArray, Variant,
-	parse_quote,
+	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Type, TypeArray, TypeBareFn,
+	TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, Variant, parse_quote,
 };
 
 #[cfg(feature = "dummy_a")]
@@ -186,11 +186,101 @@ fn type_array_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_str(cursor.clone(), "arr", Shape::Cylinder);
-	let link = ElementLink::new(*parent, cursor, "type");
+	let link = ElementLink::new(*parent, cursor, "Array");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
 	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn bare_fn_proc(
+	ty: &TypeBareFn,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Cylinder);
+	let link = ElementLink::new(*parent, cursor, "BareFn");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn group_proc(
+	ty: &TypeGroup,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Group");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	type_proc(&ty.elem, &cursor, flow, id_gen)
+}
+
+fn impl_trait_proc(
+	ty: &TypeImplTrait,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "ImplTrait");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn infer_proc(
+	ty: &TypeInfer,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Infer");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn macro_proc(
+	ty: &TypeMacro,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Macro");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
+}
+
+fn never_proc(
+	ty: &TypeNever,
+	parent: &Integer,
+	flow: &mut Flowchart<Integer>,
+	id_gen: &mut IdGen,
+) -> MermaidResult<(), Integer> {
+	let cursor = id_gen.next();
+	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
+	let link = ElementLink::new(*parent, cursor, "Never");
+	flow.add_node(node)?;
+	flow.add_link(link)?;
+
+	Ok(())
 }
 
 fn type_proc(
@@ -203,12 +293,12 @@ fn type_proc(
 
 	match ty {
 		Type::Array(x) => type_array_proc(x, &parent, flow, id_gen),
-		Type::BareFn(x) => todo!(),
-		Type::Group(x) => todo!(),
-		Type::ImplTrait(x) => todo!(),
-		Type::Infer(x) => todo!(),
-		Type::Macro(x) => todo!(),
-		Type::Never(x) => todo!(),
+		Type::BareFn(x) => bare_fn_proc(x, &cursor, flow, id_gen),
+		Type::Group(x) => group_proc(x, &cursor, flow, id_gen),
+		Type::ImplTrait(x) => impl_trait_proc(x, &cursor, flow, id_gen),
+		Type::Infer(x) => infer_proc(x, &cursor, flow, id_gen),
+		Type::Macro(x) => macro_proc(x, &cursor, flow, id_gen),
+		Type::Never(x) => never_proc(x, &cursor, flow, id_gen),
 		Type::Paren(x) => todo!(),
 		Type::Path(x) => todo!(),
 		Type::Ptr(x) => todo!(),
