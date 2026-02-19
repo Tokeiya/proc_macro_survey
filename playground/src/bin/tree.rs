@@ -438,6 +438,8 @@ fn unnamed_proc(
 		for attr in elem.attrs.iter() {
 			attr_proc(attr, &cursor, flow, id_gen)?
 		}
+
+		type_proc(&elem.ty, &cursor, flow, id_gen)?
 	}
 
 	Ok(())
