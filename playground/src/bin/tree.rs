@@ -12,70 +12,43 @@ use syn::{
 	TypePtr, TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
 };
 
-#[cfg(feature = "dummy_a")]
-#[cfg(feature = "dummy_a")]
-pub enum EnumSample<'a, 'b, T: 'b>
-where
-	'a: 'b,
-{
-	#[cfg(feature = "dummy_b")]
-	#[doc = "document"]
-	TupleVariant(
-		#[cfg(feature = "dummy_b")] (&'b T, i32),
-		#[cfg(feature = "dummy_b")] &'a str,
-	),
-	#[cfg(feature = "dummy_c")]
-	NamedVariant {
-		#[cfg(feature = "dummy_c")]
-		reference: &'a Integer,
-		value: i32,
-		#[doc = "foo"]
-		tuple: (f32, f64),
-	},
-	#[cfg(feature = "dummy_d")]
-	UnitVariant,
-	BareFn(fn(i32, i32) -> i32),
-	Array([i32; 10]),
-	Slice(&'a [T]),
-}
-
 pub fn main() {
 	let input: ItemEnum = parse_quote! {
-	#[cfg(feature = "dummy_a")]
-	#[cfg(feature = "dummy_a")]
-	pub enum EnumSample<'a, 'b, T: 'b>
-	where
-		'a: 'b,
-	{
-		#[cfg(feature = "dummy_b")]
-		#[doc = "document"]
-		TupleVariant(
-			#[cfg(feature = "dummy_b")] (&'b T, i32),
-			#[cfg(feature = "dummy_b")] &'a str,
-		),
-		#[cfg(feature = "dummy_c")]
-		NamedVariant {
+		#[cfg(feature = "dummy_a")]
+		#[cfg(feature = "dummy_a")]
+		pub enum EnumSample<'a, 'b, T: 'b>
+		where
+			'a: 'b,
+		{
+			#[cfg(feature = "dummy_b")]
+			#[doc = "document"]
+			TupleVariant(
+				#[cfg(feature = "dummy_b")] (&'b T, i32),
+				#[cfg(feature = "dummy_b")] &'a str,
+			),
 			#[cfg(feature = "dummy_c")]
-			reference: &'a Integer,
-			value: i32,
-			#[doc = "foo"]
-			tuple: (f32, f64),
-		},
-		#[cfg(feature = "dummy_d")]
-		UnitVariant,
-		BareFn(fn(i32, i32) -> i32),
-		Array([i32; 10]),
-		Slice(&'a [T]),
-	}
-				};
-	
+			NamedVariant {
+				#[cfg(feature = "dummy_c")]
+				reference: &'a Integer,
+				value: i32,
+				#[doc = "foo"]
+				tuple: (f32, f64),
+			},
+			#[cfg(feature = "dummy_d")]
+			UnitVariant,
+			BareFn(fn(i32, i32) -> i32),
+			Array([i32; 10]),
+			Slice(&'a [T]),
+		}
+	};
+
 	let mut file = std::fs::File::create("output.mmd").unwrap();
-	
+
 	let mut flowchart = Flowchart::<Integer>::new("enum".to_string(), Orientation::LeftToRight);
 	let mut id_gen = IdGen::default();
-	
+
 	_ = enum_proc(&input, &mut flowchart, &mut id_gen).unwrap();
-	
+
 	flowchart.ord_write(&mut file).unwrap();
 }
 
@@ -90,38 +63,38 @@ fn enum_proc(
 	id_gen: &mut IdGen,
 ) -> MermaidResult<(), Integer> {
 	let node = ElementNode::from_token(id_gen.next(), &data.ident, NodeShape::Hex);
-	
+
 	flow.add_node(node)?;
 	let parent = id_gen.current();
-	
+
 	let (i, t, w) = data.generics.split_for_impl();
-	
+
 	let node = RegularNode::new(id_gen.next(), Shape::LeanL, Some(to_string(&i)));
 	let cursor = flow.add_node(node)?;
-	
+
 	let link = ElementLink::new(parent, cursor, "impl");
 	flow.add_link(link)?;
-	
+
 	let node = RegularNode::new(id_gen.next(), Shape::LeanL, Some(to_string(&t)));
 	let cursor = flow.add_node(node)?;
 	let link = ElementLink::new(parent, cursor, "type");
 	flow.add_link(link)?;
-	
+
 	if let Some(w) = w {
 		let node = RegularNode::new(id_gen.next(), Shape::LeanL, Some(to_string(&w)));
 		let cursor = flow.add_node(node)?;
 		let link = ElementLink::new(parent, cursor, "where");
 		flow.add_link(link)?;
 	}
-	
+
 	for att in data.attrs.iter() {
 		attr_proc(att, &parent, flow, id_gen)?
 	}
-	
+
 	for variant in data.variants.iter() {
 		variant_proc(variant, &parent, flow, id_gen)?
 	}
-	
+
 	Ok(())
 }
 
@@ -135,7 +108,7 @@ fn attr_proc(
 	let cursor = flow.add_node(node)?;
 	let link = ElementLink::new(*parent, cursor, "attr");
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -149,17 +122,17 @@ fn variant_proc(
 	let cursor = flow.add_node(node)?;
 	let link = ElementLink::new(*parent, cursor, "variant");
 	flow.add_link(link)?;
-	
+
 	for attr in variant.attrs.iter() {
 		attr_proc(attr, &cursor, flow, id_gen)?
 	}
-	
+
 	match &variant.fields {
 		Fields::Named(n) => named_proc(n, &cursor, flow, id_gen)?,
 		Fields::Unnamed(u) => unnamed_proc(u, &cursor, flow, id_gen)?,
 		Fields::Unit => {}
 	}
-	
+
 	Ok(())
 }
 
@@ -173,17 +146,17 @@ fn named_proc(
 		let cursor = id_gen.next();
 		let node = ElementNode::from_token(cursor, &elem.ident, Shape::Odd);
 		let link = ElementLink::new(*parent, cursor, "field");
-		
+
 		flow.add_node(node)?;
 		flow.add_link(link)?;
-		
+
 		for attr in elem.attrs.iter() {
 			attr_proc(attr, &cursor, flow, id_gen)?
 		}
-		
+
 		type_proc(&elem.ty, &cursor, flow, id_gen)?
 	}
-	
+
 	Ok(())
 }
 
@@ -198,7 +171,7 @@ fn type_array_proc(
 	let link = ElementLink::new(*parent, cursor, "Array");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
 
@@ -213,7 +186,7 @@ fn bare_fn_proc(
 	let link = ElementLink::new(*parent, cursor, "BareFn");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -228,7 +201,7 @@ fn group_proc(
 	let link = ElementLink::new(*parent, cursor, "Group");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
 
@@ -243,7 +216,7 @@ fn impl_trait_proc(
 	let link = ElementLink::new(*parent, cursor, "ImplTrait");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -258,7 +231,7 @@ fn infer_proc(
 	let link = ElementLink::new(*parent, cursor, "Infer");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -273,7 +246,7 @@ fn macro_proc(
 	let link = ElementLink::new(*parent, cursor, "Macro");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -288,7 +261,7 @@ fn never_proc(
 	let link = ElementLink::new(*parent, cursor, "Never");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -303,7 +276,7 @@ fn paren_proc(
 	let link = ElementLink::new(*parent, cursor, "Paren");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
 
@@ -318,7 +291,7 @@ fn path_proc(
 	let link = ElementLink::new(*parent, cursor, "Path");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -333,7 +306,7 @@ fn ptr_proc(
 	let link = ElementLink::new(*parent, cursor, "Ptr");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
 
@@ -345,14 +318,14 @@ fn lifetime_proc(
 ) -> MermaidResult<(), Integer> {
 	if let Some(lt) = lifetime {
 		let cursor = id_gen.next();
-		
+
 		let node = ElementNode::from_token(cursor.clone(), lt, Shape::Rounded);
 		let link = ElementLink::new(*parent, cursor, "Lifetime");
-		
+
 		flow.add_node(node)?;
 		flow.add_link(link)?;
 	}
-	
+
 	Ok(())
 }
 
@@ -367,7 +340,7 @@ fn reference_proc(
 	let link = ElementLink::new(*parent, cursor, "Reference");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	lifetime_proc(&ty.lifetime, &cursor, flow, id_gen)?;
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
@@ -383,7 +356,7 @@ fn slice_proc(
 	let link = ElementLink::new(*parent, cursor, "Slice");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
 
@@ -398,7 +371,7 @@ fn trait_object_proc(
 	let link = ElementLink::new(*parent, cursor, "TraitObject");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	Ok(())
 }
 
@@ -413,15 +386,15 @@ fn tuple_proc(
 	let link = ElementLink::new(*parent, cursor, "Tuple");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
-	
+
 	let tmp = &ty.elems.iter().len();
-	
+
 	dbg!(tmp);
-	
+
 	for elem in ty.elems.iter() {
 		type_proc(elem, &cursor, flow, id_gen)?
 	}
-	
+
 	Ok(())
 }
 
@@ -458,17 +431,17 @@ fn unnamed_proc(
 ) -> MermaidResult<(), Integer> {
 	for elem in fields.unnamed.iter() {
 		let cursor = id_gen.next();
-		
+
 		let node = ElementNode::from_token(cursor, &elem.ty, Shape::Odd);
 		let link = ElementLink::new(*parent, cursor, "field");
 		flow.add_node(node)?;
 		flow.add_link(link)?;
-		
+
 		for attr in elem.attrs.iter() {
 			attr_proc(attr, &cursor, flow, id_gen)?
 		}
 		type_proc(&elem.ty, &cursor, flow, id_gen)?
 	}
-	
+
 	Ok(())
 }

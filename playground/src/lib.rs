@@ -1,3 +1,4 @@
+mod generator;
 mod id_gen;
 mod nodes;
 mod print_token;
