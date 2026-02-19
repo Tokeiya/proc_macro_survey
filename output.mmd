@@ -1,29 +1,29 @@
 ---
 title:enum
 ---
-flowchart BT
-	14@{ shape: stadium,label: "NamedVariant" }
-	17@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
-	18@{ shape: odd,label: "value" }
-	20@{ shape: subroutine,label: "#35; [doc = \"foo\"]" }
+flowchart LR
 	21@{ shape: stadium,label: "UnitVariant" }
-	13@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
-	22@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_d\")]" }
-	1@{ shape: hexagon,label: "EnumSample" }
 	10@{ shape: odd,label: "(& 'b T , i32)" }
-	6@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
-	11@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
-	2@{ shape: lean-l,label: "< 'a , 'b , T : 'b >" }
-	15@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
-	5@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
-	8@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
-	19@{ shape: odd,label: "tuple" }
+	1@{ shape: hexagon,label: "EnumSample" }
 	3@{ shape: lean-l,label: "< 'a , 'b , T >" }
+	9@{ shape: subroutine,label: "#35; [doc = \"document\"]" }
+	13@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
+	16@{ shape: odd,label: "reference" }
+	19@{ shape: odd,label: "tuple" }
+	22@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_d\")]" }
+	5@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
+	6@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_a\")]" }
 	4@{ shape: lean-l,label: "where 'a : 'b ," }
 	7@{ shape: stadium,label: "TupleVariant" }
-	9@{ shape: subroutine,label: "#35; [doc = \"document\"]" }
+	8@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
+	15@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
+	17@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_c\")]" }
+	20@{ shape: subroutine,label: "#35; [doc = \"foo\"]" }
+	2@{ shape: lean-l,label: "< 'a , 'b , T : 'b >" }
 	12@{ shape: odd,label: "& 'a str" }
-	16@{ shape: odd,label: "reference" }
+	14@{ shape: stadium,label: "NamedVariant" }
+	18@{ shape: odd,label: "value" }
+	11@{ shape: subroutine,label: "#35; [cfg (feature = \"dummy_b\")]" }
 	1 -- "impl" --> 2
 	1 -- "type" --> 3
 	1 -- "where" --> 4

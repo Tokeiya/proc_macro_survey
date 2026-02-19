@@ -54,7 +54,6 @@ mod tests {
 	use super::*;
 	use crate::prelude::*;
 	use crate::regular_link::RegularLink;
-	use crate::render::test_helper::assert;
 
 	#[test]
 	fn from_ref() {

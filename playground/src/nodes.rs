@@ -14,8 +14,12 @@ use std::io::Write;
 pub struct ElementNode(RegularNode<Integer>);
 
 impl ElementNode {
-	pub fn new(id: Integer, contents: &impl ToTokens, shape: NodeShape) -> Self {
+	pub fn from_token(id: Integer, contents: &impl ToTokens, shape: NodeShape) -> Self {
 		Self(RegularNode::new(id, shape, Some(to_string(&contents))))
+	}
+
+	pub fn from_str(id: Integer, contents: &str, shape: NodeShape) -> Self {
+		Self(RegularNode::new(id, shape, Some(contents.to_string())))
 	}
 }
 
