@@ -778,243 +778,339 @@ impl<'a> visit::Visit<'a> for Visit {
 	}
 
 	fn visit_lifetime(&mut self, i: &'a syn::Lifetime) {
-		println!("Visiting lifetime");
-		visit::visit_lifetime(self, i)
+		self.enter();
+		self.print("Visiting lifetime");
+		visit::visit_lifetime(self, i);
+		self.exit();
 	}
 
 	fn visit_lifetime_param(&mut self, i: &'a LifetimeParam) {
-		println!("Visiting lifetime parameter");
-		visit::visit_lifetime_param(self, i)
+		self.enter();
+		self.print("Visiting lifetime parameter");
+		visit::visit_lifetime_param(self, i);
+		self.exit();
 	}
 
 	fn visit_lit(&mut self, i: &'a Lit) {
-		println!("Visiting literal");
-		visit::visit_lit(self, i)
+		self.enter();
+		self.print("Visiting literal");
+		visit::visit_lit(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_bool(&mut self, i: &'a LitBool) {
-		println!("Visiting boolean literal");
-		visit::visit_lit_bool(self, i)
+		self.enter();
+		self.print("Visiting boolean literal");
+		visit::visit_lit_bool(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_byte(&mut self, i: &'a syn::LitByte) {
-		println!("Visiting byte literal");
-		visit::visit_lit_byte(self, i)
+		self.enter();
+		self.print("Visiting byte literal");
+		visit::visit_lit_byte(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_byte_str(&mut self, i: &'a syn::LitByteStr) {
-		println!("Visiting byte string literal");
-		visit::visit_lit_byte_str(self, i)
+		self.enter();
+		self.print("Visiting byte string literal");
+		visit::visit_lit_byte_str(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_cstr(&mut self, i: &'a LitCStr) {
-		println!("Visiting C string literal");
-		visit::visit_lit_cstr(self, i)
+		self.enter();
+		self.print("Visiting C string literal");
+		visit::visit_lit_cstr(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_char(&mut self, i: &'a syn::LitChar) {
-		println!("Visiting char literal");
-		visit::visit_lit_char(self, i)
+		self.enter();
+		self.print("Visiting character literal");
+		visit::visit_lit_char(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_float(&mut self, i: &'a syn::LitFloat) {
-		println!("Visiting float literal");
-		visit::visit_lit_float(self, i)
+		self.enter();
+		self.print("Visiting float literal");
+		visit::visit_lit_float(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_int(&mut self, i: &'a syn::LitInt) {
-		println!("Visiting integer literal");
-		visit::visit_lit_int(self, i)
+		self.enter();
+		self.print("Visiting integer literal");
+		visit::visit_lit_int(self, i);
+		self.exit();
 	}
 
 	fn visit_lit_str(&mut self, i: &'a syn::LitStr) {
-		println!("Visiting string literal");
-		visit::visit_lit_str(self, i)
+		self.enter();
+		self.print("Visiting string literal");
+		visit::visit_lit_str(self, i);
+		self.exit();
 	}
 
 	fn visit_local(&mut self, i: &'a Local) {
-		println!("Visiting local variable");
-		visit::visit_local(self, i)
+		self.enter();
+		self.print("Visiting local variable");
+		visit::visit_local(self, i);
+		self.exit();
 	}
 
 	fn visit_local_init(&mut self, i: &'a LocalInit) {
-		println!("Visiting local variable initialization");
-		visit::visit_local_init(self, i)
+		self.enter();
+		self.print("Visiting local variable initialization");
+		visit::visit_local_init(self, i);
+		self.exit();
 	}
 
 	fn visit_macro(&mut self, i: &'a syn::Macro) {
-		println!("Visiting macro");
-		visit::visit_macro(self, i)
+		self.enter();
+		self.print("Visiting macro");
+		visit::visit_macro(self, i);
+		self.exit();
 	}
 
 	fn visit_macro_delimiter(&mut self, i: &'a MacroDelimiter) {
-		println!("Visiting macro delimiter");
-		visit::visit_macro_delimiter(self, i)
+		self.enter();
+		self.print("Visiting macro delimiter");
+		visit::visit_macro_delimiter(self, i);
+		self.exit();
 	}
 
 	fn visit_member(&mut self, i: &'a Member) {
-		println!("Visiting member");
-		visit::visit_member(self, i)
+		self.enter();
+		self.print("Visiting member");
+		visit::visit_member(self, i);
+		self.exit();
 	}
 
 	fn visit_meta(&mut self, i: &'a Meta) {
-		println!("Visiting meta");
-		visit::visit_meta(self, i)
+		self.enter();
+		self.print("Visiting meta");
+		visit::visit_meta(self, i);
+		self.exit();
 	}
 
 	fn visit_meta_list(&mut self, i: &'a MetaList) {
-		println!("Visiting meta list");
-		visit::visit_meta_list(self, i)
+		self.enter();
+		self.print("Visiting meta list");
+		visit::visit_meta_list(self, i);
+		self.exit();
 	}
 
 	fn visit_meta_name_value(&mut self, i: &'a MetaNameValue) {
-		println!("Visiting meta name-value");
-		visit::visit_meta_name_value(self, i)
+		self.enter();
+		self.print("Visiting meta name value");
+		visit::visit_meta_name_value(self, i);
+		self.exit();
 	}
 
 	fn visit_parenthesized_generic_arguments(&mut self, i: &'a ParenthesizedGenericArguments) {
-		println!("Visiting parenthesized generic arguments");
-		visit::visit_parenthesized_generic_arguments(self, i)
+		self.enter();
+		self.print("Visiting parenthesized generic arguments");
+		visit::visit_parenthesized_generic_arguments(self, i);
+		self.exit();
 	}
 
 	fn visit_pat(&mut self, i: &'a Pat) {
-		println!("Visiting pattern");
-		visit::visit_pat(self, i)
+		self.enter();
+		self.print("Visiting pattern");
+		visit::visit_pat(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_ident(&mut self, i: &'a PatIdent) {
-		println!("Visiting pattern identifier");
-		visit::visit_pat_ident(self, i)
+		self.enter();
+		self.print("Visiting pattern identifier");
+		visit::visit_pat_ident(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_or(&mut self, i: &'a PatOr) {
-		println!("Visiting pattern or");
-		visit::visit_pat_or(self, i)
+		self.enter();
+		self.print("Visiting pattern or");
+		visit::visit_pat_or(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_paren(&mut self, i: &'a PatParen) {
-		println!("Visiting pattern paren");
-		visit::visit_pat_paren(self, i)
+		self.enter();
+		self.print("Visiting pattern paren");
+		visit::visit_pat_paren(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_reference(&mut self, i: &'a PatReference) {
-		println!("Visiting pattern reference");
-		visit::visit_pat_reference(self, i)
+		self.enter();
+		self.print("Visiting pattern reference");
+		visit::visit_pat_reference(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_rest(&mut self, i: &'a PatRest) {
-		println!("Visiting pattern rest");
-		visit::visit_pat_rest(self, i)
+		self.enter();
+		self.print("Visiting pattern rest");
+		visit::visit_pat_rest(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_slice(&mut self, i: &'a PatSlice) {
-		println!("Visiting pattern slice");
-		visit::visit_pat_slice(self, i)
+		self.enter();
+		self.print("Visiting pattern slice");
+		visit::visit_pat_slice(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_struct(&mut self, i: &'a PatStruct) {
-		println!("Visiting pattern struct");
-		visit::visit_pat_struct(self, i)
+		self.enter();
+		self.print("Visiting pattern struct");
+		visit::visit_pat_struct(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_tuple(&mut self, i: &'a PatTuple) {
-		println!("Visiting pattern tuple");
-		visit::visit_pat_tuple(self, i)
+		self.enter();
+		self.print("Visiting pattern tuple");
+		visit::visit_pat_tuple(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_tuple_struct(&mut self, i: &'a PatTupleStruct) {
-		println!("Visiting pattern tuple struct");
-		visit::visit_pat_tuple_struct(self, i)
+		self.enter();
+		self.print("Visiting pattern tuple struct");
+		visit::visit_pat_tuple_struct(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_type(&mut self, i: &'a PatType) {
-		println!("Visiting pattern type");
-		visit::visit_pat_type(self, i)
+		self.enter();
+		self.print("Visiting pattern type");
+		visit::visit_pat_type(self, i);
+		self.exit();
 	}
 
 	fn visit_pat_wild(&mut self, i: &'a PatWild) {
-		println!("Visiting pattern wildcard");
-		visit::visit_pat_wild(self, i)
+		self.enter();
+		self.print("Visiting pattern wildcard");
+		visit::visit_pat_wild(self, i);
+		self.exit();
 	}
 
 	fn visit_path(&mut self, i: &'a syn::Path) {
-		println!("Visiting path");
-		visit::visit_path(self, i)
+		self.enter();
+		self.print("Visiting path");
+		visit::visit_path(self, i);
+		self.exit();
 	}
 
 	fn visit_path_arguments(&mut self, i: &'a syn::PathArguments) {
-		println!("Visiting path arguments");
-		visit::visit_path_arguments(self, i)
+		self.enter();
+		self.print("Visiting path arguments");
+		visit::visit_path_arguments(self, i);
+		self.exit();
 	}
 
 	fn visit_path_segment(&mut self, i: &'a syn::PathSegment) {
-		println!("Visiting path segment");
-		visit::visit_path_segment(self, i)
+		self.enter();
+		self.print("Visiting path segment");
+		visit::visit_path_segment(self, i);
+		self.exit();
 	}
 
 	fn visit_pointer_mutability(&mut self, i: &'a PointerMutability) {
-		println!("Visiting pointer mutability");
-		visit::visit_pointer_mutability(self, i)
+		self.enter();
+		self.print("Visiting pointer mutability");
+		visit::visit_pointer_mutability(self, i);
+		self.exit();
 	}
 
 	fn visit_precise_capture(&mut self, i: &'a PreciseCapture) {
-		println!("Visiting precise capture");
-		visit::visit_precise_capture(self, i)
+		self.enter();
+		self.print("Visiting precise capture");
+		visit::visit_precise_capture(self, i);
+		self.exit();
 	}
 
 	fn visit_predicate_lifetime(&mut self, i: &'a PredicateLifetime) {
-		println!("Visiting predicate lifetime");
-		visit::visit_predicate_lifetime(self, i)
+		self.enter();
+		self.print("Visiting predicate lifetime");
+		visit::visit_predicate_lifetime(self, i);
+		self.exit();
 	}
 
 	fn visit_predicate_type(&mut self, i: &'a PredicateType) {
-		println!("Visiting predicate type");
-		visit::visit_predicate_type(self, i)
+		self.enter();
+		self.print("Visiting predicate type");
+		visit::visit_predicate_type(self, i);
+		self.exit();
 	}
 
 	fn visit_qself(&mut self, i: &'a syn::QSelf) {
-		println!("Visiting qualified self");
-		visit::visit_qself(self, i)
+		self.enter();
+		self.print("Visiting qualified self");
+		visit::visit_qself(self, i);
+		self.exit();
 	}
 
 	fn visit_range_limits(&mut self, i: &'a syn::RangeLimits) {
-		println!("Visiting range limits");
-		visit::visit_range_limits(self, i)
+		self.enter();
+		self.print("Visiting range limits");
+		visit::visit_range_limits(self, i);
+		self.exit();
 	}
 
 	fn visit_receiver(&mut self, i: &'a Receiver) {
-		println!("Visiting receiver");
-		visit::visit_receiver(self, i)
+		self.enter();
+		self.print("Visiting receiver");
+		visit::visit_receiver(self, i);
+		self.exit();
 	}
 
 	fn visit_return_type(&mut self, i: &'a ReturnType) {
-		println!("Visiting return type");
-		visit::visit_return_type(self, i)
+		self.enter();
+		self.print("Visiting return type");
+		visit::visit_return_type(self, i);
+		self.exit();
 	}
 
 	fn visit_signature(&mut self, i: &'a Signature) {
-		println!("Visiting signature");
-		visit::visit_signature(self, i)
+		self.enter();
+		self.print("Visiting signature");
+		visit::visit_signature(self, i);
+		self.exit();
 	}
 
 	fn visit_span(&mut self, i: &Span) {
-		println!("Visiting span");
-		visit::visit_span(self, i)
+		self.enter();
+		self.print("Visiting span");
+		visit::visit_span(self, i);
+		self.exit();
 	}
 
 	fn visit_static_mutability(&mut self, i: &'a StaticMutability) {
-		println!("Visiting static mutability");
-		visit::visit_static_mutability(self, i)
+		self.enter();
+		self.print("Visiting static mutability");
+		visit::visit_static_mutability(self, i);
+		self.exit();
 	}
 
 	fn visit_stmt(&mut self, i: &'a syn::Stmt) {
-		println!("Visiting statement");
-		visit::visit_stmt(self, i)
+		self.enter();
+		self.print("Visiting statement");
+		visit::visit_stmt(self, i);
+		self.exit();
 	}
 
 	fn visit_stmt_macro(&mut self, i: &'a StmtMacro) {
-		println!("Visiting statement macro");
-		visit::visit_stmt_macro(self, i)
+		self.enter();
+		self.print("Visiting statement macro");
+		visit::visit_stmt_macro(self, i);
+		self.exit();
 	}
 
 	fn visit_token_stream(&mut self, i: &'a TokenStream) {
@@ -1022,187 +1118,261 @@ impl<'a> visit::Visit<'a> for Visit {
 	}
 
 	fn visit_trait_bound(&mut self, i: &'a TraitBound) {
-		println!("Visiting trait bound");
-		visit::visit_trait_bound(self, i)
+		self.enter();
+		self.print("Visiting trait bound");
+		visit::visit_trait_bound(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_bound_modifier(&mut self, i: &'a TraitBoundModifier) {
-		println!("Visiting trait bound modifier");
-		visit::visit_trait_bound_modifier(self, i)
+		self.enter();
+		self.print("Visiting trait bound modifier");
+		visit::visit_trait_bound_modifier(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_item(&mut self, i: &'a syn::TraitItem) {
-		println!("Visiting trait item");
-		visit::visit_trait_item(self, i)
+		self.enter();
+		self.print("Visiting trait item");
+		visit::visit_trait_item(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_item_const(&mut self, i: &'a syn::TraitItemConst) {
-		println!("Visiting trait item constant");
-		visit::visit_trait_item_const(self, i)
+		self.enter();
+		self.print("Visiting trait item constant");
+		visit::visit_trait_item_const(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_item_fn(&mut self, i: &'a TraitItemFn) {
-		println!("Visiting trait item function");
-		visit::visit_trait_item_fn(self, i)
+		self.enter();
+		self.print("Visiting trait item function");
+		visit::visit_trait_item_fn(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_item_macro(&mut self, i: &'a syn::TraitItemMacro) {
-		println!("Visiting trait item macro");
-		visit::visit_trait_item_macro(self, i)
+		self.enter();
+		self.print("Visiting trait item macro");
+		visit::visit_trait_item_macro(self, i);
+		self.exit();
 	}
 
 	fn visit_trait_item_type(&mut self, i: &'a syn::TraitItemType) {
-		println!("Visiting trait item type");
-		visit::visit_trait_item_type(self, i)
+		self.enter();
+		self.print("Visiting trait item type");
+		visit::visit_trait_item_type(self, i);
+		self.exit();
 	}
 
 	fn visit_type(&mut self, i: &'a Type) {
-		println!("Visiting type");
-		visit::visit_type(self, i)
+		self.enter();
+		self.print("Visiting type");
+		visit::visit_type(self, i);
+		self.exit();
 	}
 
 	fn visit_type_array(&mut self, i: &'a TypeArray) {
-		println!("Visiting type array");
-		visit::visit_type_array(self, i)
+		self.enter();
+		self.print("Visiting type array");
+		visit::visit_type_array(self, i);
+		self.exit();
 	}
 
 	fn visit_type_bare_fn(&mut self, i: &'a TypeBareFn) {
-		println!("Visiting type bare function");
-		visit::visit_type_bare_fn(self, i)
+		self.enter();
+		self.print("Visiting type bare function");
+		visit::visit_type_bare_fn(self, i);
+		self.exit();
 	}
 
 	fn visit_type_group(&mut self, i: &'a TypeGroup) {
-		println!("Visiting type group");
-		visit::visit_type_group(self, i)
+		self.enter();
+		self.print("Visiting type group");
+		visit::visit_type_group(self, i);
+		self.exit();
 	}
 
 	fn visit_type_impl_trait(&mut self, i: &'a syn::TypeImplTrait) {
-		println!("Visiting type impl trait");
-		visit::visit_type_impl_trait(self, i)
+		self.enter();
+		self.print("Visiting type impl trait");
+		visit::visit_type_impl_trait(self, i);
+		self.exit();
 	}
 
 	fn visit_type_infer(&mut self, i: &'a syn::TypeInfer) {
-		println!("Visiting type infer");
-		visit::visit_type_infer(self, i)
+		self.enter();
+		self.print("Visiting type infer");
+		visit::visit_type_infer(self, i);
+		self.exit();
 	}
 
 	fn visit_type_macro(&mut self, i: &'a syn::TypeMacro) {
-		println!("Visiting type macro");
-		visit::visit_type_macro(self, i)
+		self.enter();
+		self.print("Visiting type macro");
+		visit::visit_type_macro(self, i);
+		self.exit();
 	}
 
 	fn visit_type_never(&mut self, i: &'a TypeNever) {
-		println!("Visiting type never");
-		visit::visit_type_never(self, i)
+		self.enter();
+		self.print("Visiting type never");
+		visit::visit_type_never(self, i);
+		self.exit();
 	}
 
 	fn visit_type_param(&mut self, i: &'a syn::TypeParam) {
-		println!("Visiting type param");
-		visit::visit_type_param(self, i)
+		self.enter();
+		self.print("Visiting type param");
+		visit::visit_type_param(self, i);
+		self.exit();
 	}
 
 	fn visit_type_param_bound(&mut self, i: &'a syn::TypeParamBound) {
-		println!("Visiting type parameter bound");
-		visit::visit_type_param_bound(self, i)
+		self.enter();
+		self.print("Visiting type parameter bound");
+		visit::visit_type_param_bound(self, i);
+		self.exit();
 	}
 
 	fn visit_type_paren(&mut self, i: &'a TypeParen) {
-		println!("Visiting type paren");
-		visit::visit_type_paren(self, i)
+		self.enter();
+		self.print("Visiting type paren");
+		visit::visit_type_paren(self, i);
+		self.exit();
 	}
 
 	fn visit_type_path(&mut self, i: &'a syn::TypePath) {
-		println!("Visiting type path");
-		visit::visit_type_path(self, i)
+		self.enter();
+		self.print("Visiting type path");
+		visit::visit_type_path(self, i);
+		self.exit();
 	}
 
 	fn visit_type_ptr(&mut self, i: &'a syn::TypePtr) {
-		println!("Visiting type pointer");
-		visit::visit_type_ptr(self, i)
+		self.enter();
+		self.print("Visiting type pointer");
+		visit::visit_type_ptr(self, i);
+		self.exit();
 	}
 
 	fn visit_type_reference(&mut self, i: &'a syn::TypeReference) {
-		println!("Visiting type reference");
-		visit::visit_type_reference(self, i)
+		self.enter();
+		self.print("Visiting type reference");
+		visit::visit_type_reference(self, i);
+		self.exit();
 	}
 
 	fn visit_type_slice(&mut self, i: &'a TypeSlice) {
-		println!("Visiting type slice");
-		visit::visit_type_slice(self, i)
+		self.enter();
+		self.print("Visiting type slice");
+		visit::visit_type_slice(self, i);
+		self.exit();
 	}
 
 	fn visit_type_trait_object(&mut self, i: &'a syn::TypeTraitObject) {
-		println!("Visiting type trait object");
-		visit::visit_type_trait_object(self, i)
+		self.enter();
+		self.print("Visiting type trait object");
+		visit::visit_type_trait_object(self, i);
+		self.exit();
 	}
 
 	fn visit_type_tuple(&mut self, i: &'a TypeTuple) {
-		println!("Visiting type tuple");
-		visit::visit_type_tuple(self, i)
+		self.enter();
+		self.print("Visiting type tuple");
+		visit::visit_type_tuple(self, i);
+		self.exit();
 	}
 
 	fn visit_un_op(&mut self, i: &'a UnOp) {
-		println!("Visiting unary operator");
-		visit::visit_un_op(self, i)
+		self.enter();
+		self.print("Visiting unary operator");
+		visit::visit_un_op(self, i);
+		self.exit();
 	}
 
 	fn visit_use_glob(&mut self, i: &'a UseGlob) {
-		println!("Visiting use glob");
-		visit::visit_use_glob(self, i)
+		self.enter();
+		self.print("Visiting use glob");
+		visit::visit_use_glob(self, i);
+		self.exit();
 	}
 
 	fn visit_use_group(&mut self, i: &'a UseGroup) {
-		println!("Visiting use group");
-		visit::visit_use_group(self, i)
+		self.enter();
+		self.print("Visiting use group");
+		visit::visit_use_group(self, i);
+		self.exit();
 	}
 
 	fn visit_use_name(&mut self, i: &'a syn::UseName) {
-		println!("Visiting use name");
-		visit::visit_use_name(self, i)
+		self.enter();
+		self.print("Visiting use name");
+		visit::visit_use_name(self, i);
+		self.exit();
 	}
 
 	fn visit_use_path(&mut self, i: &'a UsePath) {
-		println!("Visiting use path");
-		visit::visit_use_path(self, i)
+		self.enter();
+		self.print("Visiting use path");
+		visit::visit_use_path(self, i);
+		self.exit();
 	}
 
 	fn visit_use_rename(&mut self, i: &'a syn::UseRename) {
-		println!("Visiting use rename");
-		visit::visit_use_rename(self, i)
+		self.enter();
+		self.print("Visiting use rename");
+		visit::visit_use_rename(self, i);
+		self.exit();
 	}
 
 	fn visit_use_tree(&mut self, i: &'a syn::UseTree) {
-		println!("Visiting use tree");
-		visit::visit_use_tree(self, i)
+		self.enter();
+		self.print("Visiting use tree");
+		visit::visit_use_tree(self, i);
+		self.exit();
 	}
 
 	fn visit_variadic(&mut self, i: &'a Variadic) {
-		println!("Visiting variadic");
-		visit::visit_variadic(self, i)
+		self.enter();
+		self.print("Visiting variadic");
+		visit::visit_variadic(self, i);
+		self.exit();
 	}
 
 	fn visit_variant(&mut self, i: &'a syn::Variant) {
-		println!("Visiting variant");
-		visit::visit_variant(self, i)
+		self.enter();
+		self.print("Visiting variant");
+		visit::visit_variant(self, i);
+		self.exit();
 	}
 
 	fn visit_vis_restricted(&mut self, i: &'a VisRestricted) {
-		println!("Visiting restricted visibility");
-		visit::visit_vis_restricted(self, i)
+		self.enter();
+		self.print("Visiting restricted visibility");
+		visit::visit_vis_restricted(self, i);
+		self.exit();
 	}
 
 	fn visit_visibility(&mut self, i: &'a syn::Visibility) {
-		println!("Visiting visibility");
-		visit::visit_visibility(self, i)
+		self.enter();
+		self.print("Visiting visibility");
+		visit::visit_visibility(self, i);
+		self.exit();
 	}
 
 	fn visit_where_clause(&mut self, i: &'a syn::WhereClause) {
-		println!("Visiting where clause");
-		visit::visit_where_clause(self, i)
+		self.enter();
+		self.print("Visiting where clause");
+		visit::visit_where_clause(self, i);
+		self.exit();
 	}
 
 	fn visit_where_predicate(&mut self, i: &'a syn::WherePredicate) {
-		println!("Visiting where predicate");
-		visit::visit_where_predicate(self, i)
+		self.enter();
+		self.print("Visiting where predicate");
+		visit::visit_where_predicate(self, i);
+		self.exit();
 	}
 }
