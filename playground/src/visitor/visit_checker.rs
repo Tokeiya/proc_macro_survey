@@ -21,20 +21,6 @@ use syn::{
 	TypeSlice, TypeTuple, UnOp, UseGlob, UseGroup, UsePath, Variadic, VisRestricted,
 };
 
-const SIZE: usize = 10;
-const INDENT: [&str; SIZE] = [
-	"",
-	"  ",
-	"    ",
-	"      ",
-	"        ",
-	"          ",
-	"            ",
-	"              ",
-	"                ",
-	"                  ",
-];
-
 pub struct Visit {
 	depth: usize,
 }
@@ -47,11 +33,7 @@ impl Default for Visit {
 
 impl Visit {
 	fn print(&self, value: &str) {
-		if self.depth > SIZE {
-			print!("{}", INDENT[self.depth]);
-		} else {
-			print!("{}", " ".repeat(self.depth))
-		}
+		print!("{:02}:{:indent$}", self.depth, "", indent = self.depth * 2);
 		println!("{value}");
 	}
 
