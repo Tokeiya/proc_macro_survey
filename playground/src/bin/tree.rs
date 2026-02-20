@@ -7,9 +7,9 @@ use mermaid_writer::regular_node::RegularNode;
 use playground::prelude::{ElementLink, ElementNode, IdGen, Integer};
 use quote::{ToTokens, quote};
 use syn::{
-	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Lifetime, Type, TypeArray,
-	TypeBareFn, TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, TypeParen, TypePath,
-	TypePtr, TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
+	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Lifetime, ReturnType, Type,
+	TypeArray, TypeBareFn, TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, TypeParen,
+	TypePath, TypePtr, TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
 };
 
 pub fn main() {
@@ -32,11 +32,14 @@ pub fn main() {
 				reference: &'a Integer,
 				value: i32,
 				#[doc = "foo"]
-				tuple: (f32, f64),
+				tuple: (std::f32, f64),
 			},
 			#[cfg(feature = "dummy_d")]
 			UnitVariant,
-			BareFn(fn(i32, i32) -> i32),
+			BareFnA(fn(i32, i32) -> i32),
+			BareFnB(fn()->()),
+			BareFnC(fn()),
+			BareFnD(extern "C" fn(i32,i32)->i32),
 			Array([i32; 10]),
 			Slice(&'a [T]),
 		}
@@ -120,7 +123,7 @@ fn variant_proc(
 ) -> MermaidResult<(), Integer> {
 	let node = ElementNode::from_token(id_gen.next(), &variant.ident, Shape::Stadium);
 	let cursor = flow.add_node(node)?;
-	let link = ElementLink::new(*parent, cursor, "variant");
+	let link = ElementLink::new(*parent, cursor, "var");
 	flow.add_link(link)?;
 
 	for attr in variant.attrs.iter() {
@@ -145,7 +148,7 @@ fn named_proc(
 	for elem in fields.named.iter() {
 		let cursor = id_gen.next();
 		let node = ElementNode::from_token(cursor, &elem.ident, Shape::Odd);
-		let link = ElementLink::new(*parent, cursor, "field");
+		let link = ElementLink::new(*parent, cursor, "fld");
 
 		flow.add_node(node)?;
 		flow.add_link(link)?;
@@ -167,10 +170,18 @@ fn type_array_proc(
 	id_gen: &mut IdGen,
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
-	let node = ElementNode::from_token(cursor.clone(), &ty.len, Shape::Cylinder);
-	let link = ElementLink::new(*parent, cursor, "Array");
+	let node = ElementNode::from_token(cursor.clone(), &ty, Shape::Cylinder);
+	let link = ElementLink::new(*parent, cursor, "arr");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
+
+	{
+		let cur = id_gen.next();
+		let node = ElementNode::from_token(cur.clone(), &ty.len, Shape::Rounded);
+		let link = ElementLink::new(cursor.clone(), cur, "len");
+		flow.add_node(node)?;
+		flow.add_link(link)?;
+	}
 
 	type_proc(&ty.elem, &cursor, flow, id_gen)
 }
@@ -183,9 +194,40 @@ fn bare_fn_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Cylinder);
-	let link = ElementLink::new(*parent, cursor, "BareFn");
+	let link = ElementLink::new(*parent, cursor, "bfn");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
+
+	{
+		for elem in ty.inputs.iter() {
+			let cur = id_gen.next();
+			let node = ElementNode::from_token(cur.clone(), &elem, Shape::Rounded);
+			let link = ElementLink::new(cursor.clone(), cur, "arg");
+			flow.add_node(node)?;
+			flow.add_link(link)?;
+
+			type_proc(&elem.ty, &cur, flow, id_gen)?;
+		}
+
+		let cur = id_gen.next();
+
+		let node = match &ty.output {
+			ReturnType::Default => ElementNode::from_str(cur.clone(), "Default", Shape::Card),
+			ReturnType::Type(_, t) => ElementNode::from_token(cur.clone(), t, Shape::Rounded),
+		};
+
+		let link = ElementLink::new(cursor.clone(), cur, "ret");
+		flow.add_node(node)?;
+		flow.add_link(link)?;
+
+		if let Some(abi) = &ty.abi {
+			let cur = id_gen.next();
+			let node = ElementNode::from_token(cur.clone(), abi, Shape::Card);
+			let link = ElementLink::new(cursor.clone(), cur, "abi");
+			flow.add_node(node)?;
+			flow.add_link(link)?;
+		}
+	}
 
 	Ok(())
 }
@@ -198,7 +240,7 @@ fn group_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Group");
+	let link = ElementLink::new(*parent, cursor, "grp");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -213,7 +255,7 @@ fn impl_trait_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "ImplTrait");
+	let link = ElementLink::new(*parent, cursor, "impl");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -228,7 +270,7 @@ fn infer_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Infer");
+	let link = ElementLink::new(*parent, cursor, "infer");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -243,7 +285,7 @@ fn macro_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Macro");
+	let link = ElementLink::new(*parent, cursor, "macro");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -258,7 +300,7 @@ fn never_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Never");
+	let link = ElementLink::new(*parent, cursor, "never");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -273,7 +315,7 @@ fn paren_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Paren");
+	let link = ElementLink::new(*parent, cursor, "paren");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -288,7 +330,7 @@ fn path_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Path");
+	let link = ElementLink::new(*parent, cursor, "path");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -320,7 +362,7 @@ fn lifetime_proc(
 		let cursor = id_gen.next();
 
 		let node = ElementNode::from_token(cursor.clone(), lt, Shape::Rounded);
-		let link = ElementLink::new(*parent, cursor, "Lifetime");
+		let link = ElementLink::new(*parent, cursor, "lft");
 
 		flow.add_node(node)?;
 		flow.add_link(link)?;
@@ -337,7 +379,7 @@ fn reference_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Reference");
+	let link = ElementLink::new(*parent, cursor, "ref");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -353,7 +395,7 @@ fn slice_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Slice");
+	let link = ElementLink::new(*parent, cursor, "slice");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -368,7 +410,7 @@ fn trait_object_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "TraitObject");
+	let link = ElementLink::new(*parent, cursor, "tobj");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -383,7 +425,7 @@ fn tuple_proc(
 ) -> MermaidResult<(), Integer> {
 	let cursor = id_gen.next();
 	let node = ElementNode::from_token(cursor.clone(), ty, Shape::Rounded);
-	let link = ElementLink::new(*parent, cursor, "Tuple");
+	let link = ElementLink::new(*parent, cursor, "tuple");
 	flow.add_node(node)?;
 	flow.add_link(link)?;
 
@@ -433,7 +475,7 @@ fn unnamed_proc(
 		let cursor = id_gen.next();
 
 		let node = ElementNode::from_token(cursor, &elem.ty, Shape::Odd);
-		let link = ElementLink::new(*parent, cursor, "field");
+		let link = ElementLink::new(*parent, cursor, "fld");
 		flow.add_node(node)?;
 		flow.add_link(link)?;
 
