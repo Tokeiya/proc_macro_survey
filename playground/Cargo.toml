@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 proc_macro = { path = "../proc_macro" }
-syn = { version = "*", features = ["full"] }
+syn = { version = "*", features = ["full", "visit"] }
 quote = "*"
 proc-macro2 = "*"
 regex = "*"

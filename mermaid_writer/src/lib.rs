@@ -27,4 +27,5 @@ pub mod prelude {
 	pub use super::render::Render;
 	pub use crate::connection::Connection;
 	pub use crate::contents_format::Format as ContentsFormat;
+	pub use crate::error;
 }

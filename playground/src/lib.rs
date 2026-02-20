@@ -2,6 +2,7 @@ mod generator;
 mod id_gen;
 mod nodes;
 mod print_token;
+pub mod visitor;
 
 pub mod prelude {
 	pub use super::id_gen::{IdGen, Integer};

@@ -474,7 +474,7 @@ fn unnamed_proc(
 	for elem in fields.unnamed.iter() {
 		let cursor = id_gen.next();
 
-		let node = ElementNode::from_token(cursor, &elem.ty, Shape::Odd);
+		let node = ElementNode::from_token(cursor, &elem, Shape::Odd);
 		let link = ElementLink::new(*parent, cursor, "fld");
 		flow.add_node(node)?;
 		flow.add_link(link)?;
