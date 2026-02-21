@@ -44,6 +44,8 @@ pub fn main() {
 			Slice(&'a [T]),
 		}
 	};
+	
+	syn::parse_s
 
 	let mut file = std::fs::File::create("output.mmd").unwrap();
 
