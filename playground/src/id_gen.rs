@@ -1,6 +1,5 @@
-use clap::Parser;
 use mermaid_writer::prelude::{Key, Render};
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 use std::io::Write;
 
 #[derive(Clone, Debug, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]

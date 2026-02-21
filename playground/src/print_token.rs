@@ -1,4 +1,4 @@
-use quote::{ToTokens, format_ident, quote};
+use quote::{ToTokens, quote};
 
 pub fn print_token(header: Option<&str>, token: &impl ToTokens) {
 	let q = quote! {#token};

@@ -1,8 +1,6 @@
 use playground::prelude::*;
-use proc_macro::*;
-use proc_macro2::Ident;
-use quote::{ToTokens, quote};
-use syn::{Data, DataEnum, DeriveInput, Field, Fields, FieldsUnnamed, Type, Variant, parse_quote};
+use quote::ToTokens;
+use syn::{Field, Fields, FieldsUnnamed, Variant, parse_quote};
 use syn::{FieldsNamed, ItemEnum};
 pub struct Envelope(pub i16);
 
@@ -111,6 +109,4 @@ fn field_proc(value: &Field) {
 }
 
 #[cfg(test)]
-mod tests {
-	use super::*;
-}
+mod tests {}

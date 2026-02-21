@@ -1,15 +1,14 @@
 extern crate core;
-use mermaid_writer::error::{Error as MermaidError, Result as MermaidResult};
+use mermaid_writer::error::Result as MermaidResult;
 use mermaid_writer::node_shape::Shape;
 use mermaid_writer::prelude::*;
-use mermaid_writer::regular_link::RegularLink;
 use mermaid_writer::regular_node::RegularNode;
 use playground::prelude::{ElementLink, ElementNode, IdGen, Integer};
 use quote::{ToTokens, quote};
 use syn::{
-	Attribute, Field, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Lifetime, ReturnType, Type,
-	TypeArray, TypeBareFn, TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, TypeParen,
-	TypePath, TypePtr, TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
+	Attribute, Fields, FieldsNamed, FieldsUnnamed, ItemEnum, Lifetime, ReturnType, Type, TypeArray,
+	TypeBareFn, TypeGroup, TypeImplTrait, TypeInfer, TypeMacro, TypeNever, TypeParen, TypePath,
+	TypePtr, TypeReference, TypeSlice, TypeTraitObject, TypeTuple, Variant, parse_quote,
 };
 
 pub fn main() {
@@ -44,8 +43,6 @@ pub fn main() {
 			Slice(&'a [T]),
 		}
 	};
-	
-	syn::parse_s
 
 	let mut file = std::fs::File::create("output.mmd").unwrap();
 

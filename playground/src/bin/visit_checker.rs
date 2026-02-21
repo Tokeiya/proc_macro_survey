@@ -1,6 +1,6 @@
 use playground::visitor::visit_checker::Visit as VisitCheck;
 use syn::visit::Visit;
-use syn::{Item, ItemEnum, parse_quote};
+use syn::{Item, parse_quote};
 fn main() {
 	let mut visit = VisitCheck::default();
 

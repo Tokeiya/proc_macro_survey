@@ -1,5 +1,3 @@
-use quote::ToTokens;
-use regex::Regex;
 use syn::ItemEnum;
 
 pub fn assert_impl(scr: ItemEnum) -> String {

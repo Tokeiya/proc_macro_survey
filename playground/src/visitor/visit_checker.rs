@@ -1,7 +1,5 @@
-use mermaid_writer::prelude::*;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
-use std::thread::current;
 use syn::visit::{self};
 use syn::{
 	Abi, AngleBracketedGenericArguments, Arm, AssocConst, AssocType, AttrStyle, BareFnArg,

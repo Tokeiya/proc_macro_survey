@@ -1,5 +1,4 @@
 use crate::id_gen::Integer;
-use mermaid_writer::flowcharts;
 use mermaid_writer::line_style::Style;
 use mermaid_writer::link::Link;
 use mermaid_writer::node::Node as OtherNode;
@@ -7,7 +6,6 @@ use mermaid_writer::node_shape::Shape;
 use mermaid_writer::prelude::*;
 use mermaid_writer::regular_link::RegularLink;
 use mermaid_writer::regular_node::RegularNode;
-use proc_macro2::Ident;
 use quote::{ToTokens, quote};
 use std::io::Write;
 

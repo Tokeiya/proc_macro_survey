@@ -1,5 +1,4 @@
 use playground::prelude::Integer;
-use syn::token::In;
 
 pub enum EnumSample<'a, 'b, T: 'b>
 where
