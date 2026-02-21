@@ -1,5 +1,6 @@
 use mermaid_writer::prelude::*;
 use proc_macro2::{Span, TokenStream};
+use quote::{ToTokens, quote};
 use std::thread::current;
 use syn::visit::{self};
 use syn::{
@@ -20,6 +21,14 @@ use syn::{
 	TraitBoundModifier, TraitItemFn, Type, TypeArray, TypeBareFn, TypeGroup, TypeNever, TypeParen,
 	TypeSlice, TypeTuple, UnOp, UseGlob, UseGroup, UsePath, Variadic, VisRestricted,
 };
+
+fn to_string(token: &impl ToTokens) -> String {
+	let quoted = quote! {#token};
+	quoted
+		.to_string()
+		.replace("\"", "\\\"")
+		.replace("#", "#35;")
+}
 
 pub struct Visit {
 	depth: usize,
@@ -1096,7 +1105,9 @@ impl<'a> visit::Visit<'a> for Visit {
 	}
 
 	fn visit_token_stream(&mut self, i: &'a TokenStream) {
-		println!("Visiting token stream");
+		self.enter();
+		self.print(&format!("Token stream: {}", to_string(&i)));
+		self.exit();
 	}
 
 	fn visit_trait_bound(&mut self, i: &'a TraitBound) {
