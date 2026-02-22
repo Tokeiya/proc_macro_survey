@@ -3,6 +3,7 @@ use mermaid_writer::node_shape::Shape;
 use mermaid_writer::prelude::{self, *};
 use mermaid_writer::regular_node::RegularNode;
 use std::io::Write;
+use std::process::{Command, Stdio};
 
 pub struct Node(RegularNode<Id>);
 

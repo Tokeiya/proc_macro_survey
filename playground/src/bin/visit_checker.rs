@@ -2,6 +2,7 @@ use playground::visitor;
 use playground::visitor::visit_checker::Visit as VisitCheck;
 use playground::visitor::visit_mapper::VisitMapper;
 use std::fs::File;
+use std::ops::Deref;
 use syn::visit::Visit;
 use syn::{Item, parse_quote};
 
@@ -46,8 +47,11 @@ fn main() {
 
 	let root = mapper.get_root().unwrap();
 
-	let json = serde_json::to_string_pretty(&root).unwrap();
+	println!("{}", root.borrow().content());
 
 	let mut file = File::create("output.json").unwrap();
 	serde_json::to_writer_pretty(file, &root).unwrap();
+
+	let mut file = File::create("visit_output.yaml").unwrap();
+	serde_yaml::to_writer(&mut file, &root).unwrap();
 }

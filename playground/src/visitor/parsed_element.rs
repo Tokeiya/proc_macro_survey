@@ -1,7 +1,33 @@
 use quote::{ToTokens, quote};
 use serde::Serialize;
 use std::cell::RefCell;
+use std::io::Write;
+use std::process::{Command, Stdio};
 use std::rc::Rc;
+fn format_code(code: &str) -> String {
+	let mut child = Command::new("rustfmt")
+		.stdin(Stdio::piped())
+		.stdout(Stdio::piped())
+		.stderr(Stdio::piped())
+		.spawn()
+		.expect("Failed to spawn rustfmt process");
+
+	let mut stdin = child.stdin.take().expect("Failed to open stdin");
+	stdin
+		.write_all(code.as_bytes())
+		.expect("Failed to write to stdin");
+
+	drop(stdin); // Close stdin to signal EOF to rustfmt
+
+	let output = child.wait_with_output().expect("Failed to read output");
+
+	let ret = String::from_utf8_lossy(&output.stdout)
+		.to_string()
+		.replace("\t", "    ")
+		.trim()
+		.to_string();
+	ret
+}
 
 #[derive(Serialize)]
 pub struct Element {
@@ -11,16 +37,22 @@ pub struct Element {
 }
 
 impl Element {
-	pub fn from_token_stream(name: &str, contents: impl ToTokens) -> Self {
+	pub fn from_token_stream(name: &str, contents: impl ToTokens, format: bool) -> Self {
 		let quoted = quote! {#contents};
 		let str = quoted.to_string();
-		// .replace("\"", "\\\"");
-		//			.replace("#", "#35;");
 
-		Self {
-			name: name.to_string(),
-			contents: str,
-			children: Vec::new(),
+		if format {
+			Self {
+				name: name.to_string(),
+				contents: format_code(&str),
+				children: Vec::new(),
+			}
+		} else {
+			Self {
+				name: name.to_string(),
+				contents: str,
+				children: Vec::new(),
+			}
 		}
 	}
 

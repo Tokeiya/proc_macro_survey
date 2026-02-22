@@ -51,51 +51,8 @@ impl VisitMapper {
 
 //noinspection DuplicatedCode
 impl<'a> Visit<'a> for VisitMapper {
-	fn visit_impl_item_fn(&mut self, i: &'a ImplItemFn) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("impl_item_fn", i)));
-
-		//noinspection DuplicatedCode
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_impl_item_fn(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_lit_cstr(&mut self, i: &'a LitCStr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_cstr", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_lit_cstr(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_assoc_const(&mut self, i: &'a AssocConst) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("assoc_const", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_assoc_const(self, i);
-		self.stack.pop().unwrap();
-	}
-
 	fn visit_abi(&mut self, i: &'a Abi) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("abi", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("abi", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -112,6 +69,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"angle_bracketed_generic_arguments",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -126,7 +84,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_arm(&mut self, i: &'a Arm) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("arm", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("arm", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -139,8 +97,30 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_assoc_const(&mut self, i: &'a AssocConst) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"assoc_const",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_assoc_const(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_assoc_type(&mut self, i: &'a AssocType) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("assoc_type", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"assoc_type",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -170,148 +150,12 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
-	fn visit_item_fn(&mut self, i: &'a syn::ItemFn) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_fn", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_fn(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_struct(&mut self, i: &'a syn::ItemStruct) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_struct", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_struct(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_enum(&mut self, i: &'a syn::ItemEnum) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_enum", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_enum(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_impl(&mut self, i: &'a syn::ItemImpl) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_impl", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_impl(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_trait(&mut self, i: &'a syn::ItemTrait) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_trait", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_trait(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_mod(&mut self, i: &'a syn::ItemMod) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_mod", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_mod(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_use(&mut self, i: &'a syn::ItemUse) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_use", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_use(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_const(&mut self, i: &'a syn::ItemConst) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_const", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_const(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_static(&mut self, i: &'a syn::ItemStatic) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_static", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_static(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_item_macro(&mut self, i: &'a syn::ItemMacro) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_macro", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_item_macro(self, i);
-		self.stack.pop().unwrap();
-	}
-
 	fn visit_attribute(&mut self, i: &'a Attribute) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("attribute", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"attribute",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -325,7 +169,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_bare_fn_arg(&mut self, i: &'a BareFnArg) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("bare_fn_arg", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"bare_fn_arg",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -339,7 +187,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_bare_variadic(&mut self, i: &'a BareVariadic) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("bare_variadic", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"bare_variadic",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -353,7 +205,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_bin_op(&mut self, i: &'a BinOp) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("bin_op", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("bin_op", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -367,7 +219,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_block(&mut self, i: &'a Block) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("block", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("block", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -384,6 +236,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"bound_lifetimes",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -401,6 +254,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"captured_param",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -415,7 +269,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_const_param(&mut self, i: &'a ConstParam) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("const_param", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"const_param",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -429,7 +287,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_constraint(&mut self, i: &'a Constraint) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("constraint", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"constraint",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -511,7 +373,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_derive_input(&mut self, i: &'a DeriveInput) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("derive_input", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"derive_input",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -525,7 +391,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr(&mut self, i: &'a Expr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -539,7 +405,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_array(&mut self, i: &'a ExprArray) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_array", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_array",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -553,7 +423,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_assign(&mut self, i: &'a ExprAssign) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_assign", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_assign",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -567,7 +441,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_async(&mut self, i: &'a ExprAsync) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_async", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_async",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -581,7 +459,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_await(&mut self, i: &'a ExprAwait) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_await", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_await",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -595,7 +477,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_binary(&mut self, i: &'a ExprBinary) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_binary", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_binary",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -609,7 +495,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_block(&mut self, i: &'a ExprBlock) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_block", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_block",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -623,7 +513,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_break(&mut self, i: &'a ExprBreak) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_break", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_break",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -637,7 +531,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_call(&mut self, i: &'a ExprCall) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_call", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_call",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -651,7 +549,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_cast(&mut self, i: &'a ExprCast) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_cast", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_cast",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -665,7 +567,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_closure(&mut self, i: &'a ExprClosure) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_closure", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_closure",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -679,7 +585,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_const(&mut self, i: &'a ExprConst) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_const", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_const",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -693,7 +603,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_continue(&mut self, i: &'a ExprContinue) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_continue", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_continue",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -707,7 +621,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_field(&mut self, i: &'a ExprField) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_field", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_field",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -721,7 +639,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_for_loop(&mut self, i: &'a ExprForLoop) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_for_loop", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_for_loop",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -735,7 +657,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_group(&mut self, i: &'a ExprGroup) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_group", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_group",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -749,7 +675,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_if(&mut self, i: &'a ExprIf) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_if", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_if", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -763,7 +691,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_index(&mut self, i: &'a ExprIndex) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_index", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_index",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -777,7 +709,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_infer(&mut self, i: &'a ExprInfer) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_infer", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_infer",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -791,7 +727,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_let(&mut self, i: &'a ExprLet) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_let", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_let", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -805,7 +743,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_lit(&mut self, i: &'a ExprLit) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_lit", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_lit", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -819,7 +759,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_loop(&mut self, i: &'a ExprLoop) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_loop", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_loop",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -833,7 +777,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_macro(&mut self, i: &'a ExprMacro) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_macro", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_macro",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -847,7 +795,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_match(&mut self, i: &'a ExprMatch) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_match", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_match",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -864,6 +816,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"expr_method_call",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -878,7 +831,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_paren(&mut self, i: &'a ExprParen) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_paren", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_paren",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -892,7 +849,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_path(&mut self, i: &'a ExprPath) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_path", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_path",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -906,7 +867,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_range(&mut self, i: &'a ExprRange) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_range", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_range",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -920,7 +885,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_raw_addr(&mut self, i: &'a ExprRawAddr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_raw_addr", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_raw_addr",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -937,6 +906,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"expr_reference",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -951,7 +921,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_repeat(&mut self, i: &'a ExprRepeat) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_repeat", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_repeat",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -965,7 +939,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_return(&mut self, i: &'a syn::ExprReturn) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_return", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_return",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -979,7 +957,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_struct(&mut self, i: &'a syn::ExprStruct) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_struct", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_struct",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -993,7 +975,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_try(&mut self, i: &'a ExprTry) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_try", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_try", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1010,6 +994,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"expr_try_block",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1024,7 +1009,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_tuple(&mut self, i: &'a syn::ExprTuple) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_tuple", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_tuple",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1038,7 +1027,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_unary(&mut self, i: &'a ExprUnary) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_unary", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_unary",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1052,7 +1045,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_unsafe(&mut self, i: &'a ExprUnsafe) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_unsafe", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_unsafe",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1066,7 +1063,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_while(&mut self, i: &'a ExprWhile) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_while", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_while",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1080,7 +1081,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_expr_yield(&mut self, i: &'a ExprYield) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("expr_yield", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"expr_yield",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1094,7 +1099,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_field(&mut self, i: &'a Field) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("field", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("field", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1125,7 +1130,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_field_pat(&mut self, i: &'a FieldPat) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("field_pat", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"field_pat",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1139,7 +1148,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_field_value(&mut self, i: &'a FieldValue) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("field_value", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"field_value",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1153,7 +1166,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_fields(&mut self, i: &'a Fields) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("fields", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("fields", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1167,7 +1180,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_fields_named(&mut self, i: &'a FieldsNamed) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("fields_named", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"fields_named",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1184,6 +1201,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"fields_unnamed",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1198,7 +1216,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_file(&mut self, i: &'a File) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("file", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("file", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1212,7 +1230,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_fn_arg(&mut self, i: &'a FnArg) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("fn_arg", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("fn_arg", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1226,7 +1244,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_foreign_item(&mut self, i: &'a ForeignItem) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("foreign_item", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"foreign_item",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1243,6 +1265,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"foreign_item_fn",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1260,6 +1283,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"foreign_item_macro",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1276,6 +1300,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"foreign_item_static",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1292,6 +1317,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"foreign_item_type",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1308,6 +1334,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"generic_argument",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1322,7 +1349,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_generic_param(&mut self, i: &'a GenericParam) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("generic_param", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"generic_param",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1336,7 +1367,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_generics(&mut self, i: &'a Generics) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("generics", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"generics", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1350,7 +1383,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_ident(&mut self, i: &'a Ident) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("ident", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("ident", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1364,7 +1397,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_impl_item(&mut self, i: &'a ImplItem) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("impl_item", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"impl_item",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1381,6 +1418,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"impl_item_const",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1394,10 +1432,30 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_impl_item_fn(&mut self, i: &'a ImplItemFn) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"impl_item_fn",
+			i,
+			false,
+		)));
+
+		//noinspection DuplicatedCode
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_impl_item_fn(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_impl_item_macro(&mut self, i: &'a ImplItemMacro) {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"impl_item_macro",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1415,6 +1473,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"impl_item_type",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1446,7 +1505,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_index(&mut self, i: &'a Index) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("index", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("index", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1460,7 +1519,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_item(&mut self, i: &'a Item) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("item", i, true)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1473,10 +1532,47 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_item_const(&mut self, i: &'a syn::ItemConst) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_const",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_const(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_enum(&mut self, i: &'a syn::ItemEnum) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_enum",
+			i,
+			true,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_enum(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_item_extern_crate(&mut self, i: &'a ItemExternCrate) {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"item_extern_crate",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1490,10 +1586,27 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_item_fn(&mut self, i: &'a syn::ItemFn) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_fn", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_fn(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_item_foreign_mod(&mut self, i: &'a ItemForeignMod) {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"item_foreign_mod",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1507,10 +1620,117 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_item_impl(&mut self, i: &'a syn::ItemImpl) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_impl",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_impl(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_macro(&mut self, i: &'a syn::ItemMacro) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_macro",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_macro(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_mod(&mut self, i: &'a syn::ItemMod) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_mod", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_mod(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_static(&mut self, i: &'a syn::ItemStatic) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_static",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_static(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_struct(&mut self, i: &'a syn::ItemStruct) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_struct",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_struct(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_item_trait(&mut self, i: &'a syn::ItemTrait) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_trait",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_trait(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_item_trait_alias(&mut self, i: &'a ItemTraitAlias) {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"item_trait_alias",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1525,7 +1745,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_item_type(&mut self, i: &'a ItemType) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_type", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_type",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1539,7 +1763,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_item_union(&mut self, i: &'a ItemUnion) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("item_union", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_union",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1552,8 +1780,24 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_item_use(&mut self, i: &'a syn::ItemUse) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"item_use", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_item_use(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_label(&mut self, i: &'a Label) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("label", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("label", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1567,7 +1811,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lifetime(&mut self, i: &'a Lifetime) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lifetime", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lifetime", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1584,6 +1830,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"lifetime_param",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1598,7 +1845,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit(&mut self, i: &'a Lit) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1612,7 +1859,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_bool(&mut self, i: &'a LitBool) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_bool", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_bool", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1626,7 +1875,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_byte(&mut self, i: &'a LitByte) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_byte", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_byte", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1640,7 +1891,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_byte_str(&mut self, i: &'a LitByteStr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_byte_str", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_byte_str",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1653,8 +1908,26 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_lit_cstr(&mut self, i: &'a LitCStr) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_cstr", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_lit_cstr(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_lit_char(&mut self, i: &'a LitChar) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_char", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_char", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1668,7 +1941,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_float(&mut self, i: &'a LitFloat) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_float", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_float",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1682,7 +1959,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_int(&mut self, i: &'a LitInt) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_int", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_int", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1696,7 +1975,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_lit_str(&mut self, i: &'a LitStr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("lit_str", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"lit_str", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1710,7 +1991,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_local(&mut self, i: &'a Local) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("local", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("local", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1741,7 +2022,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_macro(&mut self, i: &'a Macro) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("macro", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("macro", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1772,7 +2053,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_member(&mut self, i: &'a Member) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("member", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("member", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1786,7 +2067,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_meta(&mut self, i: &'a Meta) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("meta", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("meta", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1800,7 +2081,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_meta_list(&mut self, i: &'a MetaList) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("meta_list", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"meta_list",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1817,6 +2102,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"meta_name_value",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1834,6 +2120,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"parenthesized_generic_arguments",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1848,7 +2135,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat(&mut self, i: &'a Pat) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1862,7 +2149,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_ident(&mut self, i: &'a PatIdent) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_ident", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_ident",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1876,7 +2167,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_or(&mut self, i: &'a PatOr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_or", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_or", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1890,7 +2181,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_paren(&mut self, i: &'a PatParen) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_paren", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_paren",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1904,7 +2199,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_reference(&mut self, i: &'a PatReference) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_reference", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_reference",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1918,7 +2217,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_rest(&mut self, i: &'a PatRest) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_rest", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_rest", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1932,7 +2233,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_slice(&mut self, i: &'a PatSlice) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_slice", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_slice",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1946,7 +2251,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_struct(&mut self, i: &'a PatStruct) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_struct", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_struct",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1960,7 +2269,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_tuple(&mut self, i: &'a PatTuple) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_tuple", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_tuple",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -1977,6 +2290,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"pat_tuple_struct",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -1991,7 +2305,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_pat_type(&mut self, i: &'a PatType) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_type", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_type", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2006,7 +2322,9 @@ impl<'a> Visit<'a> for VisitMapper {
 
 	//noinspection DuplicatedCode
 	fn visit_pat_wild(&mut self, i: &'a PatWild) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("pat_wild", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"pat_wild", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2021,7 +2339,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 	//noinspection DuplicatedCode
 	fn visit_path(&mut self, i: &'a Path) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("path", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("path", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2039,6 +2357,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"path_arguments",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2054,7 +2373,11 @@ impl<'a> Visit<'a> for VisitMapper {
 
 	//noinspection DuplicatedCode
 	fn visit_path_segment(&mut self, i: &'a PathSegment) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("path_segment", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"path_segment",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2108,6 +2431,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"predicate_lifetime",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2126,6 +2450,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"predicate_type",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2174,7 +2499,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_receiver(&mut self, i: &'a Receiver) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("receiver", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"receiver", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2188,7 +2515,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_return_type(&mut self, i: &'a ReturnType) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("return_type", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"return_type",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2202,7 +2533,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_signature(&mut self, i: &'a Signature) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("signature", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"signature",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2250,7 +2585,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_stmt(&mut self, i: &'a Stmt) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("stmt", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("stmt", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2265,7 +2600,11 @@ impl<'a> Visit<'a> for VisitMapper {
 
 	//noinspection DuplicatedCode
 	fn visit_stmt_macro(&mut self, i: &'a StmtMacro) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("stmt_macro", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"stmt_macro",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2279,7 +2618,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_token_stream(&mut self, i: &'a TokenStream) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("token_stream", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"token_stream",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2289,7 +2632,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 	//noinspection DuplicatedCode
 	fn visit_trait_bound(&mut self, i: &'a TraitBound) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("trait_bound", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"trait_bound",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2307,6 +2654,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"trait_bound_modifier",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2322,7 +2670,11 @@ impl<'a> Visit<'a> for VisitMapper {
 
 	//noinspection DuplicatedCode
 	fn visit_trait_item(&mut self, i: &'a TraitItem) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("trait_item", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"trait_item",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2340,6 +2692,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"trait_item_const",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2354,7 +2707,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_trait_item_fn(&mut self, i: &'a TraitItemFn) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("trait_item_fn", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"trait_item_fn",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2371,6 +2728,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"trait_item_macro",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2388,6 +2746,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"trait_item_type",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2402,7 +2761,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type(&mut self, i: &'a Type) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("type", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2416,7 +2775,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_array(&mut self, i: &'a TypeArray) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_array", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_array",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2430,7 +2793,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_bare_fn(&mut self, i: &'a TypeBareFn) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_bare_fn", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_bare_fn",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2444,7 +2811,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_group(&mut self, i: &'a TypeGroup) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_group", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_group",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2461,6 +2832,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"type_impl_trait",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2475,7 +2847,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_infer(&mut self, i: &'a TypeInfer) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_infer", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_infer",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2489,7 +2865,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_macro(&mut self, i: &'a TypeMacro) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_macro", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_macro",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2503,7 +2883,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_never(&mut self, i: &'a TypeNever) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_never", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_never",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2517,7 +2901,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_param(&mut self, i: &'a TypeParam) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_param", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_param",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2534,6 +2922,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"type_param_bound",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2548,7 +2937,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_paren(&mut self, i: &'a TypeParen) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_paren", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_paren",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2562,7 +2955,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_path(&mut self, i: &'a TypePath) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_path", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_path",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2576,7 +2973,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_ptr(&mut self, i: &'a TypePtr) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_ptr", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_ptr", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2593,6 +2992,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"type_reference",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2606,7 +3006,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_slice(&mut self, i: &'a TypeSlice) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_slice", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_slice",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2623,6 +3027,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"type_trait_object",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2637,7 +3042,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_type_tuple(&mut self, i: &'a TypeTuple) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("type_tuple", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"type_tuple",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2651,7 +3060,7 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_un_op(&mut self, i: &'a UnOp) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("un_op", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream("un_op", i, false)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2665,7 +3074,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_use_glob(&mut self, i: &'a UseGlob) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_glob", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_glob", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2678,49 +3089,12 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
-	fn visit_variadic(&mut self, i: &'a Variadic) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("variadic", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_variadic(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_variant(&mut self, i: &'a Variant) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("variant", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_variant(self, i);
-		self.stack.pop().unwrap();
-	}
-
-	fn visit_visibility(&mut self, i: &'a Visibility) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("visibility", i)));
-
-		if let Some(parent) = self.stack.last_mut() {
-			parent.borrow_mut().add_child(elem.clone());
-		} else {
-			self.root = Some(elem.clone());
-		}
-
-		self.stack.push(elem.clone());
-		visit::visit_visibility(self, i);
-	}
-
 	fn visit_use_group(&mut self, i: &'a UseGroup) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_group", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_group",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2734,7 +3108,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_use_name(&mut self, i: &'a UseName) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_name", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_name", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2748,7 +3124,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_use_path(&mut self, i: &'a UsePath) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_path", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_path", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2762,7 +3140,11 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_use_rename(&mut self, i: &'a UseRename) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_rename", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_rename",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2775,7 +3157,9 @@ impl<'a> Visit<'a> for VisitMapper {
 	}
 
 	fn visit_use_tree(&mut self, i: &'a UseTree) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("use_tree", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"use_tree", i, false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2788,10 +3172,43 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_variadic(&mut self, i: &'a Variadic) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"variadic", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_variadic(self, i);
+		self.stack.pop().unwrap();
+	}
+
+	fn visit_variant(&mut self, i: &'a Variant) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"variant", i, false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_variant(self, i);
+		self.stack.pop().unwrap();
+	}
+
 	fn visit_vis_restricted(&mut self, i: &'a VisRestricted) {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"vis_restricted",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {
@@ -2805,8 +3222,29 @@ impl<'a> Visit<'a> for VisitMapper {
 		self.stack.pop().unwrap();
 	}
 
+	fn visit_visibility(&mut self, i: &'a Visibility) {
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"visibility",
+			i,
+			false,
+		)));
+
+		if let Some(parent) = self.stack.last_mut() {
+			parent.borrow_mut().add_child(elem.clone());
+		} else {
+			self.root = Some(elem.clone());
+		}
+
+		self.stack.push(elem.clone());
+		visit::visit_visibility(self, i);
+	}
+
 	fn visit_where_clause(&mut self, i: &'a WhereClause) {
-		let elem = Rc::new(RefCell::new(Element::from_token_stream("where_clause", i)));
+		let elem = Rc::new(RefCell::new(Element::from_token_stream(
+			"where_clause",
+			i,
+			false,
+		)));
 
 		if let Some(parent) = self.stack.last_mut() {
 			parent.borrow_mut().add_child(elem.clone());
@@ -2823,6 +3261,7 @@ impl<'a> Visit<'a> for VisitMapper {
 		let elem = Rc::new(RefCell::new(Element::from_token_stream(
 			"where_predicate",
 			i,
+			false,
 		)));
 
 		if let Some(parent) = self.stack.last_mut() {

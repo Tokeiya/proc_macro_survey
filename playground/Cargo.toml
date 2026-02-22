@@ -10,10 +10,10 @@ quote = "*"
 proc-macro2 = "*"
 regex = "*"
 mermaid_writer = { path = "../mermaid_writer" }
-clap = { version = "4.5.58", features = ["derive"] }
 rand = "*"
 serde = { version = "*", features = ["derive", "rc"] }
 serde_json = "*"
+serde_yaml = "*"
 
 [features]
 dummy_a = []
