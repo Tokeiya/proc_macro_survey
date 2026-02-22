@@ -13,10 +13,9 @@ pub struct Element {
 impl Element {
 	pub fn from_token_stream(name: &str, contents: impl ToTokens) -> Self {
 		let quoted = quote! {#contents};
-		let str = quoted
-			.to_string()
-			.replace("\"", "\\\"")
-			.replace("#", "#35;");
+		let str = quoted.to_string();
+		// .replace("\"", "\\\"");
+		//			.replace("#", "#35;");
 
 		Self {
 			name: name.to_string(),

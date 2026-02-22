@@ -1,8 +1,13 @@
+use playground::visitor;
 use playground::visitor::visit_checker::Visit as VisitCheck;
+use playground::visitor::visit_mapper::VisitMapper;
+use std::fs::File;
 use syn::visit::Visit;
 use syn::{Item, parse_quote};
+
 fn main() {
 	let mut visit = VisitCheck::default();
+	let mut mapper = VisitMapper::default();
 
 	let input: Item = parse_quote! {
 		#[cfg(feature = "dummy_a")]
@@ -37,4 +42,12 @@ fn main() {
 	};
 
 	visit.visit_item(&input);
+	mapper.visit_item(&input);
+
+	let root = mapper.get_root().unwrap();
+
+	let json = serde_json::to_string_pretty(&root).unwrap();
+
+	let mut file = File::create("output.json").unwrap();
+	serde_json::to_writer_pretty(file, &root).unwrap();
 }

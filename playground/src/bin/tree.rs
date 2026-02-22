@@ -45,7 +45,6 @@ pub fn main() {
 	};
 
 	let mut file = std::fs::File::create("output.mmd").unwrap();
-
 	let mut flowchart = Flowchart::<Integer>::new("enum".to_string(), Orientation::LeftToRight);
 	let mut id_gen = IdGen::default();
 
