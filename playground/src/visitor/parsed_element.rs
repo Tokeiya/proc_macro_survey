@@ -32,12 +32,18 @@ fn format_code(code: &str) -> String {
 #[derive(Serialize)]
 pub struct Element {
 	name: String,
+	depth: usize,
 	contents: String,
 	children: Vec<Rc<RefCell<Element>>>,
 }
 
 impl Element {
-	pub fn from_token_stream(name: &str, contents: impl ToTokens, format: bool) -> Self {
+	pub fn from_token_stream(
+		name: &str,
+		contents: impl ToTokens,
+		depth: usize,
+		format: bool,
+	) -> Self {
 		let quoted = quote! {#contents};
 		let str = quoted.to_string();
 
@@ -45,21 +51,24 @@ impl Element {
 			Self {
 				name: name.to_string(),
 				contents: format_code(&str),
+				depth,
 				children: Vec::new(),
 			}
 		} else {
 			Self {
 				name: name.to_string(),
 				contents: str,
+				depth,
 				children: Vec::new(),
 			}
 		}
 	}
 
-	pub fn from_string(name: String, contents: String) -> Self {
+	pub fn from_string(name: String, contents: String, depth: usize) -> Self {
 		Self {
 			name,
 			contents,
+			depth,
 			children: Vec::new(),
 		}
 	}
