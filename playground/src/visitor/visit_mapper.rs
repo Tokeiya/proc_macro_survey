@@ -1354,9 +1354,9 @@ impl<'a> Visit<'a> for VisitMapper {
 			parent.borrow_mut().add_child(elem.clone());
 		} else {
 			self.root = Some(elem.clone());
-			self.stack.push(elem.clone());
 		}
 
+		self.stack.push(elem.clone());
 		visit::visit_file(self, i);
 		self.stack.pop().unwrap();
 	}
@@ -1434,6 +1434,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_foreign_item_macro(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_foreign_item_static(&mut self, i: &'a ForeignItemStatic) {
@@ -1452,6 +1453,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_foreign_item_static(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_foreign_item_type(&mut self, i: &'a ForeignItemType) {
@@ -1470,6 +1472,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_foreign_item_type(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_generic_argument(&mut self, i: &'a GenericArgument) {
@@ -2786,9 +2789,9 @@ impl<'a> Visit<'a> for VisitMapper {
 			parent.borrow_mut().add_child(elem.clone());
 		} else {
 			self.root = Some(elem.clone());
-			self.stack.push(elem.clone());
 		}
 
+		self.stack.push(elem.clone());
 		visit::visit_range_limits(self, i);
 		self.stack.pop().unwrap();
 	}
@@ -3344,6 +3347,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_type_reference(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_type_slice(&mut self, i: &'a TypeSlice) {
@@ -3514,6 +3518,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_use_rename(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_use_tree(&mut self, i: &'a UseTree) {
@@ -3608,6 +3613,7 @@ impl<'a> Visit<'a> for VisitMapper {
 
 		self.stack.push(elem.clone());
 		visit::visit_visibility(self, i);
+		self.stack.pop().unwrap();
 	}
 
 	fn visit_where_clause(&mut self, i: &'a WhereClause) {
