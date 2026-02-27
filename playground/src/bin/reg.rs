@@ -11,8 +11,13 @@ fn foo() {
 }
 
 fn main() {
-	let reg = Regex::new(r#"\p{Lu}\P{Lu}*"#).unwrap();
-	let cap = reg.find_iter("AHel90990loWorld");
+	let first = Regex::new(r##"^[\p{Lu}|\p{Ll}]\P{Lu}*"##).unwrap();
+	let following = Regex::new(r#"\p{Lu}\P{Lu}*"#).unwrap();
+
+	let a = first.find("HelloWorld").unwrap();
+	dbg!(a);
+
+	let cap = following.find_iter("AHel90990loWorld");
 
 	let mut str = String::new();
 

@@ -7,3 +7,4 @@ edition = "2024"
 syn = { version = "*", features = ["full"] }
 quote = "*"
 proc-macro2 = "*"
+reg = "*"
