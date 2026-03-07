@@ -14,6 +14,8 @@ rand = "*"
 serde = { version = "*", features = ["derive", "rc"] }
 serde_json = "*"
 serde_yaml = "*"
+code_generator = { path = "../code_generator" }
+
 
 [features]
 dummy_a = []

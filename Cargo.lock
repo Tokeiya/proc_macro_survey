@@ -165,6 +165,7 @@ dependencies = [
 name = "playground"
 version = "0.1.0"
 dependencies = [
+ "code_generator",
  "mermaid_writer",
  "proc-macro2",
  "proc_macro",

@@ -1,2 +1,2 @@
-mod gen_assert;
+pub mod gen_assert;
 pub mod to_snake;

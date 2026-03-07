@@ -82,7 +82,7 @@ pub fn gen_assert(scr: &str) -> SynResult<String> {
 
 	let output = quote! {
 		#[cfg(test)]
-		impl #impl_gen #ty_gen
+		impl #impl_gen #enum_ident #ty_gen
 		#where_clause
 		{
 			#(#body)*
