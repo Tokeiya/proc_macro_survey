@@ -5,6 +5,22 @@ enum Foo {
 	Piyo,
 }
 
+#[cfg(test)]
+impl Foo {
+	pub fn assert_hoge(&self) {
+		match self {
+			Foo::Hoge => {}
+			_ => unreachable!(),
+		}
+	}
+	pub fn assert_piyo(&self) {
+		match self {
+			Foo::Piyo => {}
+			_ => unreachable!(),
+		}
+	}
+}
+
 fn main() {
 	const SCR: &str = r##"
 	enum Foo {

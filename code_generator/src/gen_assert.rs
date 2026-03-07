@@ -8,32 +8,9 @@ enum Sample {
 	Named { value: String },
 }
 
-impl Sample {
-	pub fn is_unit(&self) -> bool {
-		match self {
-			Sample::Unit => true,
-			_ => false,
-		}
-	}
-
-	pub fn is_named(&self) -> bool {
-		match self {
-			Sample::Named { .. } => true,
-			_ => false,
-		}
-	}
-
-	pub fn is_unnamed(&self) -> bool {
-		match self {
-			Sample::Unnamed(_) => true,
-			_ => false,
-		}
-	}
-}
-
 fn gen_func_name(variant: &Variant) -> syn::Ident {
 	let ident = variant.ident.to_string();
-	let mut buff = "is_".to_string();
+	let mut buff = "assert_".to_string();
 	let conv = convert(&ident);
 
 	buff.push_str(&conv);
@@ -51,8 +28,8 @@ fn gen_function_body(variant: &Variant, enum_ident: &syn::Ident) -> proc_macro2:
 	};
 	quote! {
 		match self {
-			#pattern => true,
-			_ => false,
+			#pattern => {},
+			_ => unreachable!(),
 		}
 	}
 }
@@ -62,7 +39,7 @@ fn gen_function(variant: &Variant, enum_ident: &syn::Ident) -> proc_macro2::Toke
 	let body = gen_function_body(variant, enum_ident);
 
 	quote! {
-		pub fn #name(&self)->bool{
+		pub fn #name(&self){
 			#body
 		}
 	}
