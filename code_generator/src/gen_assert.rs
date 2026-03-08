@@ -1,6 +1,8 @@
+use crate::gen_impl::gen_impl;
 use crate::to_snake::convert;
+use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Error as SynError, Fields, Item, ItemEnum, Result as SynResult, Variant};
+use syn::{Error as SynError, Fields, Item, ItemEnum, Result as SynResult, Variant, parse_quote};
 
 enum Sample {
 	Unit,
@@ -49,24 +51,18 @@ pub fn gen_assert(scr: &str) -> SynResult<String> {
 	let ast = syn::parse_str::<ItemEnum>(scr)?;
 
 	let enum_ident = &ast.ident;
-	let (impl_gen, ty_gen, where_clause) = ast.generics.split_for_impl();
-
 	let variants = &ast.variants;
 
 	let body = variants
 		.iter()
-		.map(|variant| gen_function(variant, enum_ident));
+		.map(|variant| gen_function(variant, enum_ident))
+		.collect();
 
-	let output = quote! {
-		#[cfg(test)]
-		impl #impl_gen #enum_ident #ty_gen
-		#where_clause
-		{
-			#(#body)*
-		}
-	};
+	let attr: [syn::Attribute; _] = [parse_quote!(#[cfg(test)])];
 
-	Ok(output.to_string())
+	let output = gen_impl(&body, &enum_ident, attr.as_slice(), &ast.generics);
+
+	Ok(output?.to_string())
 }
 
 #[cfg(test)]
@@ -86,30 +82,9 @@ mod tests {
 		)
 		.unwrap();
 
-		const EXPECTED: &str = r##"
-impl Sample {
-	pub fn is_unit(&self) -> bool {
-		match self {
-			Sample::Unit => true,
-			_ => false,
-		}
-	}
+		const EXPECTED: &str = r##"# [cfg (test)] impl Sample { pub fn assert_unit (& self) { match self { Sample :: Unit => { } , _ => unreachable ! () , } } pub fn assert_unnamed (& self) { match self { Sample :: Unnamed (..) => { } , _ => unreachable ! () , } } pub fn assert_named (& self) { match self { Sample :: Named { .. } => { } , _ => unreachable ! () , } } }"##;
 
-	pub fn is_named(&self) -> bool {
-		match self {
-			Sample::Named { .. } => true,
-			_ => false,
-		}
-	}
-
-	pub fn is_unnamed(&self) -> bool {
-		match self {
-			Sample::Unnamed(_) => true,
-			_ => false,
-		}
-	}
-}
-		"##;
+		println!("{}", &actual);
 
 		assert_eq!(&actual, EXPECTED);
 	}
