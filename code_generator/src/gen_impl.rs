@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Error as SynError, Fields, Item, ItemEnum, Result as SynResult, Variant, parse_quote};
+use syn::Result as SynResult;
 
 pub fn gen_impl(
 	body: &TokenStream,

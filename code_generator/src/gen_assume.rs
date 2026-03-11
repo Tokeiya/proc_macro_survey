@@ -1,4 +1,4 @@
-use syn::{Error as SynError, Fields, ItemEnum, Result as SynResult, Variant, parse_quote};
+use syn::{Fields, ItemEnum, Result as SynResult, Variant};
 
 fn gen_function_body(variant: &Variant, enum_ident: &syn::Ident) -> proc_macro2::TokenStream {
 	let ident = &variant.ident;

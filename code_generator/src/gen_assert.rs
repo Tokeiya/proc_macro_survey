@@ -1,8 +1,7 @@
 use crate::gen_impl::gen_impl;
 use crate::to_snake::convert;
-use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Error as SynError, Fields, Item, ItemEnum, Result as SynResult, Variant, parse_quote};
+use syn::{Fields, ItemEnum, Result as SynResult, Variant, parse_quote};
 
 enum Sample {
 	Unit,
